@@ -4,9 +4,10 @@
 \alias{lpdensity}
 \title{Local Polynomial Density Estimation and Inference}
 \usage{
-lpdensity(data, grid = c(), bw = c(), p = c(), q = c(), v = c(),
-  bwselect = c("MSE", "IMSE", "ROT", "IROT"), kernel = c("triangular",
-  "uniform", "epanechnikov"), Cweights = c(), Pweights = c(), scale = c())
+lpdensity(data, grid = NULL, bw = NULL, p = NULL, q = NULL, v = NULL,
+  bwselect = c("mse-dpi", "imse-dpi", "mse-rot", "imse-rot"),
+  kernel = c("triangular", "uniform", "epanechnikov"), Cweights = NULL,
+  Pweights = NULL, scale = NULL)
 }
 \arguments{
 \item{data}{Numeric vector or one dimensional matrix / data frame, the raw data.}
@@ -20,22 +21,22 @@ used for estimation. Can be (1) a positive scalar (common
 bandwidth for all grid points); or (2) a positive numeric vector specifying bandwidths for
 each grid point (should be the same length as \code{grid}).}
 
-\item{p}{Integer, the order of the local-polynomial used to construct point
-estimates. Should be larger than 0. (Default is 2.)}
+\item{p}{Integer, nonnegative, the order of the local-polynomial used to construct point
+estimates. (Default is 2.)}
 
-\item{q}{Integer, the order of the local-polynomial used to construct pointwise
+\item{q}{Integer, nonnegative, the order of the local-polynomial used to construct pointwise
 confidence interval (a.k.a. the bias correction order). Default is \code{p+1}. When specified
-\code{0}, no bias correction will be performed. Otherwise it should be larger than 2, and
+the same as \code{p}, no bias correction will be performed. Otherwise it should be
 strictly larger than \code{p}.}
 
-\item{v}{Integer, the derivative to be estimated. Default is \code{1}, which is the density function.
-Should be nonnegative.}
+\item{v}{Integer, nonnegative, the derivative of distribution function to be estimated. \code{0} for
+the distribution function, \code{1} (default) for the density funtion, etc.}
 
 \item{bwselect}{String, the method for data-driven bandwidth selection. This option will be
-ignored if \code{bw} is provided. Can be (1) \code{"MSE"} (default, mean squared error-optimal
-bandwidth selected for each grid point); or (2) \code{"IMSE"} (integrated MSE-optimal bandwidth,
-common for all grid points); (3) \code{"ROT"} (rule-of-thumb bandwidth with Gaussian
-reference model); and (4) \code{"IROT"} (integrated rule-of-thumb bandwidth with Gaussian
+ignored if \code{bw} is provided. Can be (1) \code{"mse-dpi"} (default, mean squared error-optimal
+bandwidth selected for each grid point); or (2) \code{"imse-dpi"} (integrated MSE-optimal bandwidth,
+common for all grid points); (3) \code{"mse-rot"} (rule-of-thumb bandwidth with Gaussian
+reference model); and (4) \code{"imse-rot"} (integrated rule-of-thumb bandwidth with Gaussian
 reference model).}
 
 \item{kernel}{String, the kernel function, should be one of \code{"triangular"}, \code{"uniform"} or
@@ -63,21 +64,26 @@ or \code{Pweights}.}
 }
 \description{
 \code{lpdensity} implements the local polynomial regression based density (and derivatives)
-  estimator proposed in Cattaneo, Jansson and Ma (2017). This command can also be
-  used to obtain smoothed estimates for cumulative distribution functions.
-}
-\details{
-Companion command: \code{\link{lpbwdensity}} for data-driven bandwidth selection,
+  estimator proposed in Cattaneo, Jansson and Ma (2017a). This command can also be
+  used to obtain smoothed estimates for cumulative distribution functions. See
+  Cattaneo, Jansson and Ma (2017b) for more implementation details and illustrations.
+
+  Companion command: \code{\link{lpbwdensity}} for data-driven bandwidth selection,
   and \code{\link{lpdensity.plot}} for density plot with robust confidence interval.
+
+  For more details, and related Stata and R packages useful for empirical analysis,
+  visit \url{https://sites.google.com/site/nppackages/}.
 }
 \examples{
 set.seed(42); X <- rnorm(2000)
-est1 <- lpdensity(data = X, bwselect = "IMSE")
+est1 <- lpdensity(data = X, bwselect = "imse-dpi")
 summary(est1)
 
 }
 \references{
-M. D. Cattaneo, M. Jansson and X. Ma. (2017). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Regression Distribution Estimators}. Working Paper, University of Michigan.
+M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Regression Distribution Estimators}. Working Paper, University of Michigan.
+
+M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
 }
 \seealso{
 \code{\link{lpbwdensity}} and \code{\link{lpdensity.plot}}.

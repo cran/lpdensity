@@ -1,11 +1,15 @@
 ################################################################################
-#' Local Polynomial Density Plot with Robust Confidence Interval
+#' @title Local Polynomial Density Plot with Robust Confidence Interval
 #'
-#' \code{lpdensity.plot} plots estimated density/derivatives. This command
-#'   can also be used to plot smoothed distribution function.
+#' @description \code{lpdensity.plot} plots estimated density/derivatives. This command
+#'   can also be used to plot smoothed distribution function. See
+#'   Cattaneo, Jansson and Ma (2017b) for more implementation details and illustrations.
 #'
-#' Companion command: \code{\link{lpdensity}} for local polynomial based density
+#'   Companion command: \code{\link{lpdensity}} for local polynomial based density
 #'   and derivatives estimation.
+#'
+#'   For more details, and related Stata and R packages useful for empirical analysis,
+#'   visit \url{https://sites.google.com/site/nppackages/}.
 #'
 #' @param ... Objects returned by \code{\link{lpdensity}}.
 #' @param alpha Numeric scalar between 0 and 1, the significance level for plotting
@@ -64,6 +68,11 @@
 #'
 #' Xinwei Ma (maintainer), University of Michigan. \email{xinweima@umich.edu}.
 #'
+#' @references
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Regression Distribution Estimators}. Working Paper, University of Michigan.
+#'
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
+#'
 #' @seealso \code{\link{lpdensity}}
 #'
 #' @examples
@@ -77,10 +86,10 @@
 #' lpdensity.plot(est1, est2)
 #'
 #' @export
-lpdensity.plot <- function(..., alpha=c(), type=c(), CItype=c(),
+lpdensity.plot <- function(..., alpha=NULL, type=NULL, CItype=NULL,
                            title="", xlabel="", ylabel="",
-                           lty=c(), lwd=c(), lcol=c(), pty=c(), pwd=c(), pcol=c(),
-                           CIshade=c(), CIcol=c()) {
+                           lty=NULL, lwd=NULL, lcol=NULL, pty=NULL, pwd=NULL, pcol=NULL,
+                           CIshade=NULL, CIcol=NULL) {
 
   ########################################
   # check how many series are passed in
@@ -189,11 +198,6 @@ lpdensity.plot <- function(..., alpha=c(), type=c(), CItype=c(),
     data_x$CI_r <- data_x$f_q + z_val * data_x$se_q
 
     ########################################
-    # add lines to the plot
-    if (type[i]%in%c("line", "both"))
-      temp_plot <- temp_plot + geom_line(data=data_x, aes(x=grid, y=f_p), linetype=lty[i], size=lwd[i], col=lcol[i])
-
-    ########################################
     # add CI regions to the plot
     if (CItype[i]%in%c("region", "all"))
       temp_plot <- temp_plot + geom_ribbon(data=data_x, aes(x=grid, ymin=CI_l, ymax=CI_r), alpha=CIshade[i], fill=CIcol[i])
@@ -205,14 +209,19 @@ lpdensity.plot <- function(..., alpha=c(), type=c(), CItype=c(),
       geom_line(data=data_x, aes(x=grid, y=CI_r), linetype=2, alpha=CIshade[i], col=CIcol[i])
 
     ########################################
-    # add points to the plot
-    if (type[i]%in%c("points", "both"))
-      temp_plot <- temp_plot + geom_point(data=data_x, aes(x=grid, y=f_p), shape=pty[i], size=pwd[i], col=pcol[i])
-
-    ########################################
     # add error bars to the plot
     if (CItype[i]%in%c("ebar", "all"))
       temp_plot <- temp_plot + geom_errorbar(data=data_x, aes(x=grid, ymin=CI_l, ymax=CI_r), alpha=CIshade[i], col=CIcol[i], linetype=1)
+
+    ########################################
+    # add lines to the plot
+    if (type[i]%in%c("line", "both"))
+      temp_plot <- temp_plot + geom_line(data=data_x, aes(x=grid, y=f_p), linetype=lty[i], size=lwd[i], col=lcol[i])
+
+    ########################################
+    # add points to the plot
+    if (type[i]%in%c("points", "both"))
+      temp_plot <- temp_plot + geom_point(data=data_x, aes(x=grid, y=f_p), shape=pty[i], size=pwd[i], col=pcol[i])
   }
 
   ########################################

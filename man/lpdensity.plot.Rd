@@ -4,9 +4,10 @@
 \alias{lpdensity.plot}
 \title{Local Polynomial Density Plot with Robust Confidence Interval}
 \usage{
-lpdensity.plot(..., alpha = c(), type = c(), CItype = c(), title = "",
-  xlabel = "", ylabel = "", lty = c(), lwd = c(), lcol = c(),
-  pty = c(), pwd = c(), pcol = c(), CIshade = c(), CIcol = c())
+lpdensity.plot(..., alpha = NULL, type = NULL, CItype = NULL,
+  title = "", xlabel = "", ylabel = "", lty = NULL, lwd = NULL,
+  lcol = NULL, pty = NULL, pwd = NULL, pcol = NULL, CIshade = NULL,
+  CIcol = NULL)
 }
 \arguments{
 \item{...}{Objects returned by \code{\link{lpdensity}}.}
@@ -73,11 +74,14 @@ accordingly.}
 }
 \description{
 \code{lpdensity.plot} plots estimated density/derivatives. This command
-  can also be used to plot smoothed distribution function.
-}
-\details{
-Companion command: \code{\link{lpdensity}} for local polynomial based density
+  can also be used to plot smoothed distribution function. See
+  Cattaneo, Jansson and Ma (2017b) for more implementation details and illustrations.
+
+  Companion command: \code{\link{lpdensity}} for local polynomial based density
   and derivatives estimation.
+
+  For more details, and related Stata and R packages useful for empirical analysis,
+  visit \url{https://sites.google.com/site/nppackages/}.
 }
 \examples{
 set.seed(42); X <- rnorm(2000)
@@ -89,6 +93,11 @@ est2 <- lpdensity(data = X[X>0],  grid = seq(0, 2, 0.05), bwselect = "IMSE",
   scale = sum(X>0)/length(X))
 lpdensity.plot(est1, est2)
 
+}
+\references{
+M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Regression Distribution Estimators}. Working Paper, University of Michigan.
+
+M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
 }
 \seealso{
 \code{\link{lpdensity}}

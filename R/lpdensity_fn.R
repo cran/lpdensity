@@ -114,7 +114,7 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights) {
 
     se_p[j] <- factorial(v) * sqrt( V[v+1,v+1] / (n * bw[j]^(2*v)) )
 
-    if (q > 0) {
+    if (q > p) {
       Xh_q_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:q)))
 
       XhKh_temp <- sweep(Xh_q_temp, MARGIN=1, FUN="*", STATS=Kh_temp)
