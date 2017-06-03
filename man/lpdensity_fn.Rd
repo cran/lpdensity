@@ -4,7 +4,8 @@
 \alias{lpdensity_fn}
 \title{Supporting Function for \code{\link{lpdensity}}}
 \usage{
-lpdensity_fn(data, grid, bw, p, q, v, kernel, Cweights, Pweights)
+lpdensity_fn(data, grid, bw, p, q, v, kernel, Cweights, Pweights,
+  showSE = TRUE)
 }
 \arguments{
 \item{data}{Numeric vector or one dimensional matrix / data frame, the raw data.}
@@ -33,6 +34,8 @@ for counterfactual distribution construction. Should have the same length as sam
 
 \item{Pweights}{Numeric vector or one dimensional matrix / data frame, the weights used
 in sampling. Should have the same length as sample size, and nonnegative.}
+
+\item{showSE}{\code{TRUE} (default) or \code{FALSE}, whether standard errors should be computed.}
 }
 \value{
 \item{grid}{grid points.}

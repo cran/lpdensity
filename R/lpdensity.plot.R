@@ -57,6 +57,8 @@
 #'   For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
 #'   more than one is provided, they will be applied to data series
 #'   accordingly.
+#' @param legendTitle String, title of legend.
+#' @param legendGroups String Vector, group names used in legend.
 #'
 #' @return
 #' \item{}{A stadnard \code{ggplot} object is returned, hence can be used for further customization.}
@@ -83,13 +85,13 @@
 #'   scale = sum(X<=0)/length(X))
 #' est2 <- lpdensity(data = X[X>0],  grid = seq(0, 2, 0.05), bwselect = "IMSE",
 #'   scale = sum(X>0)/length(X))
-#' lpdensity.plot(est1, est2)
+#' lpdensity.plot(est1, est2, legendTitle="My Plot", legendGroups=c("Left", "Right"))
 #'
 #' @export
 lpdensity.plot <- function(..., alpha=NULL, type=NULL, CItype=NULL,
                            title="", xlabel="", ylabel="",
                            lty=NULL, lwd=NULL, lcol=NULL, pty=NULL, pwd=NULL, pcol=NULL,
-                           CIshade=NULL, CIcol=NULL) {
+                           CIshade=NULL, CIcol=NULL, legendTitle=NULL, legendGroups=NULL) {
 
   ########################################
   # check how many series are passed in
@@ -177,25 +179,48 @@ lpdensity.plot <- function(..., alpha=NULL, type=NULL, CItype=NULL,
     CIcol <- rep(CIcol, length.out=nfig)
   }
 
+  # legend
+  # New in v0.2.1 to handle legend
+  if (length(legendTitle) == 0) {
+    legendTitle <- ""
+  } else {
+    legendTitle <- legendTitle[1]
+  }
+  if (length(legendGroups) > 0) {
+    legendGroups <- rep(legendGroups, length.out=nfig)
+    legend_default <- FALSE
+  } else {
+    legend_default <- TRUE
+  }
+
   ########################################
   # initializing plot
   ########################################
-  temp_plot <- ggplot() + theme(legend.position="none") + theme_bw()
+  temp_plot <- ggplot() + theme_bw() #+ theme(legend.position="none")
 
-  CI_l <- CI_r <- f_p <- grid <- NULL
+  CI_l <- CI_r <- f_p <- grid <- Sname <- NULL
 
   ########################################
   # looping over input models
   ########################################
-
+  ### all colors
+  col_all <- lty_all <- pty_all <- c()
   for (i in 1:nfig) {
     data_x <- data.frame(x[[i]]$Estimate[, c("grid", "f_p", "f_q", "se_p", "se_q")])
     z_val <- qnorm(1 - alpha[i]/2)
-    if (x[[i]]$opt$q == 0) {
+    if (x[[i]]$opt$q == x[[i]]$opt$p) {
       data_x$f_q <- data_x$f_p; data_x$se_q <- data_x$se_p
     }
     data_x$CI_l <- data_x$f_q - z_val * data_x$se_q
     data_x$CI_r <- data_x$f_q + z_val * data_x$se_q
+
+    # New in v0.2.1 to handle legend
+    if (legend_default) {
+      data_x$Sname <- paste("Series", i, sep=" ")
+      legendGroups <- c(legendGroups, data_x$Sname)
+    } else {
+      data_x$Sname <- legendGroups[i]
+    }
 
     ########################################
     # add CI regions to the plot
@@ -215,14 +240,42 @@ lpdensity.plot <- function(..., alpha=NULL, type=NULL, CItype=NULL,
 
     ########################################
     # add lines to the plot
-    if (type[i]%in%c("line", "both"))
-      temp_plot <- temp_plot + geom_line(data=data_x, aes(x=grid, y=f_p), linetype=lty[i], size=lwd[i], col=lcol[i])
+    if (type[i]%in%c("line", "both")) {
+      temp_plot <- temp_plot + geom_line(data=data_x, aes(x=grid, y=f_p, colour=Sname, linetype=Sname), size=lwd[i])
+    }
 
     ########################################
     # add points to the plot
-    if (type[i]%in%c("points", "both"))
-      temp_plot <- temp_plot + geom_point(data=data_x, aes(x=grid, y=f_p), shape=pty[i], size=pwd[i], col=pcol[i])
+    if (type[i]%in%c("points", "both")) {
+      temp_plot <- temp_plot + geom_point(data=data_x, aes(x=grid, y=f_p, colour=Sname, shape=Sname), size=pwd[i])
+    }
+
+    if (type[i] == "line") {
+      col_all <- c(col_all, lcol[i])
+      lty_all <- c(lty_all, lty[i])
+      pty_all <- c(pty_all, NA)
+    } else if (type[i] == "both") {
+      col_all <- c(col_all, lcol[i])
+      lty_all <- c(lty_all, lty[i])
+      pty_all <- c(pty_all, pty[i])
+    } else {
+      col_all <- c(col_all, pcol[i])
+      lty_all <- c(lty_all, NA)
+      pty_all <- c(pty_all, pty[i])
+    }
   }
+
+  ########################################
+  # change color, line type and point shape back, and customize legend
+  ########################################
+  # New in v0.2.1 to handle legend
+  index <- sort.int(legendGroups, index.return=TRUE)$ix
+  temp_plot <- temp_plot + scale_color_manual(values = col_all[index]) +
+    scale_linetype_manual(values = lty_all[index]) +
+    scale_shape_manual(values = pty_all[index]) +
+    guides(colour=guide_legend(title=legendTitle)) +
+    guides(linetype=guide_legend(title=legendTitle)) +
+    guides(shape=guide_legend(title=legendTitle))
 
   ########################################
   # add title, x and y labs

@@ -290,9 +290,9 @@ summary.CJMlpbwdensity <- function(object, ...) {
 
   for (j in 1:nrow(x$BW)) {
     cat(format(toString(j), width=4))
-    cat(format(sprintf("%3.3f", x$BW[j, "grid"]), width=10, justify="right"))
-    cat(format(sprintf("%3.3f", x$BW[j, "bw"])  , width=10, justify="right"))
-    cat(format(sprintf("%3.0f", x$BW[j, "nh"])  , width=8 , justify="right"))
+    cat(format(sprintf("%6.4f", x$BW[j, "grid"]), width=10, justify="right"))
+    cat(format(sprintf("%6.4f", x$BW[j, "bw"])  , width=10, justify="right"))
+    cat(format(sprintf("%8.0f", x$BW[j, "nh"])  , width=8 , justify="right"))
     cat("\n")
     if (is.numeric(sep)) if (sep > 0) if (j %% sep == 0) {
       cat(paste(rep("-", 14 + 10 + 8), collapse="")); cat("\n")

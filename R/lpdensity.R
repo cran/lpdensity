@@ -269,7 +269,7 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   # Point Estimation
   ################################################################################
   Estimate <- lpdensity_fn(data=data, grid=grid, bw=bw, p=p, q=q, v=v, kernel=kernel,
-                       Cweights=Cweights, Pweights=Pweights)
+                       Cweights=Cweights, Pweights=Pweights, showSE=TRUE)
   Estimate[, c("f_p", "f_q", "se_p", "se_q")] <- Estimate[, c("f_p", "f_q", "se_p", "se_q")] * scale
 
   row.names(Estimate) <- 1:ng
@@ -405,16 +405,16 @@ summary.CJMlpdensity <- function(object, ...) {
 
   for (j in 1:nrow(x$Estimate)) {
     cat(format(toString(j), width=4))
-    cat(format(sprintf("%3.3f", x$Estimate[j, "grid"]), width=10, justify="right"))
-    cat(format(sprintf("%3.3f", x$Estimate[j, "bw"])  , width=10, justify="right"))
-    cat(format(sprintf("%3.0f", x$Estimate[j, "nh"])  , width=8 , justify="right"))
-    cat(format(sprintf("%3.3f", x$Estimate[j, "f_p"]) , width=10, justify="right"))
+    cat(format(sprintf("%6.4f", x$Estimate[j, "grid"]), width=10, justify="right"))
+    cat(format(sprintf("%6.4f", x$Estimate[j, "bw"])  , width=10, justify="right"))
+    cat(format(sprintf("%8.0f", x$Estimate[j, "nh"])  , width=8 , justify="right"))
+    cat(format(sprintf("%6.4f", x$Estimate[j, "f_p"]) , width=10, justify="right"))
     cat(format(
-      paste(sprintf("%3.3f", x$Estimate[j, "se_p"]), sep=""), width=10, justify="right"))
+      paste(sprintf("%6.4f", x$Estimate[j, "se_p"]), sep=""), width=10, justify="right"))
     cat(format(
-      paste("[", sprintf("%3.3f", CI_l[j]), " , ", sep="")  , width=14, justify="right"))
+      paste(sprintf("%7.4f", CI_l[j]), " , ", sep="")  , width=14, justify="right"))
     cat(format(
-      paste(sprintf("%3.3f", CI_r[j]), "]", sep=""), width=11, justify="left"))
+      paste(sprintf("%7.4f", CI_r[j]), sep=""), width=11, justify="left"))
     cat("\n")
     if (is.numeric(sep)) if (sep > 0) if (j %% sep == 0) {
       cat(paste(rep("-", 14 + 10 + 8 + 10 + 10 + 25), collapse="")); cat("\n")

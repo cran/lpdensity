@@ -347,11 +347,11 @@ bw_IROT <- function(data, grid, p, v, kernel, regularize) {
   # bandwidth
   if (v > 0) {
     opt.f <- function(a) {
-      a^(2*p+2-2*v) * sum((bias_dgp[j, ] + a * bias_dgp[j, ])^2) + sum(sd_dgp[j, 1]^2) / a^(2*v - 1)
+      a^(2*p+2-2*v) * sum((bias_dgp[, 1] + a * bias_dgp[, 2])^2) + sum(sd_dgp[, 1]^2) / a^(2*v - 1)
     }
   } else {
     opt.f <- function(a) {
-      a^(2*p+2-2*v) * sum((bias_dgp[j, ] + a * bias_dgp[j, ])^2) + sum(sd_dgp[j, 1]^2) / a
+      a^(2*p+2-2*v) * sum((bias_dgp[, 1] + a * bias_dgp[, 2])^2) + sum(sd_dgp[, 1]^2) / a
     }
   }
 
@@ -385,7 +385,10 @@ bw_IROT <- function(data, grid, p, v, kernel, regularize) {
 #' @keywords internal
 bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
 
-  data <- sort(data)
+  ii <- order(data)
+  data <- data[ii]
+  Cweights <- Cweights[ii]
+  Pweights <- Pweights[ii]
   n    <- length(data)
   ng   <- length(grid)
   Fn   <- cumsum(Cweights * Pweights) / sum(Cweights * Pweights)
@@ -461,7 +464,7 @@ bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
       K_temp <- 0.75*(1 - (X_temp)^2) / h1
     }
     K_temp   <- Pweights[index_temp] * K_temp
-
+    
     # estimate Cp matrix
     if (p > 0) {
       C_p_hat <- matrix(apply(
@@ -497,15 +500,23 @@ bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
     if (p == 0) {
       X_temp <- t(X_temp)
     }
-    S_hat <- t(X_temp) %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp) / n
+    XhKh_temp <- sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp)
+    S_hat <- t(X_temp) %*% XhKh_temp / n
     S_hat_inv <- try(solve(S_hat), silent=TRUE)
     if (is.character(S_hat_inv)) next
 
     if (v > 0) {
       # estimate G matrix
-      G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
-      G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
-      G <- G %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp) / n
+      F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
+      G <- XhKh_temp[sum(index_temp):1, ]
+      
+      for (jj in 1:ncol(G)) {
+        G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
+      }
+
+      #G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
+      #G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
+      #G <- G %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp) / n
       G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
       G <- t(G) %*% G / n
 
@@ -533,6 +544,7 @@ bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
     # now get all constants
     const_hat[j, 1] <- factorial(v) * (S_hat_inv%*%C_p_hat)[v+1]
     const_hat[j, 2] <- factorial(v) * (S_hat_inv%*%C_p1_hat)[v+1]
+
     if (v > 0) {
       const_hat[j, 3] <- factorial(v) * sqrt(abs((S_hat_inv%*%G_hat%*%S_hat_inv)[v+1,v+1]) / (n*h1))
     } else {
@@ -581,7 +593,10 @@ bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
 #' @keywords internal
 bw_IMSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
 
-  data <- sort(data)
+  ii <- order(data)
+  data <- data[ii]
+  Cweights <- Cweights[ii]
+  Pweights <- Pweights[ii]
   n    <- length(data)
   ng   <- length(grid)
   Fn   <- cumsum(Cweights * Pweights) / sum(Cweights * Pweights)
@@ -693,15 +708,22 @@ bw_IMSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
     if (p == 0) {
       X_temp <- t(X_temp)
     }
-    S_hat <- t(X_temp) %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp) / n
+    XhKh_temp <- sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp)
+    S_hat <- t(X_temp) %*% XhKh_temp / n
     S_hat_inv <- try(solve(S_hat), silent=TRUE)
     if (is.character(S_hat_inv)) next
 
     if (v > 0) {
       # estimate G matrix
-      G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
-      G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
-      G <- G %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp) / n
+      F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
+      G <- XhKh_temp[sum(index_temp):1, ]
+      for (jj in 1:ncol(G)) {
+        G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
+      }
+
+      #G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
+      #G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
+      #G <- G %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp) / n
       G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
       G <- t(G) %*% G / n
 

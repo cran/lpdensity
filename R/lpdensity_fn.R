@@ -24,6 +24,7 @@
 #'   for counterfactual distribution construction. Should have the same length as sample size.
 #' @param Pweights Numeric vector or one dimensional matrix / data frame, the weights used
 #'   in sampling. Should have the same length as sample size, and nonnegative.
+#' @param showSE \code{TRUE} (default) or \code{FALSE}, whether standard errors should be computed.
 #'
 #' @return
 #' \item{grid}{grid points.}
@@ -39,7 +40,7 @@
 #'   if \code{q} is greater than 0.}
 #'
 #' @keywords internal
-lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights) {
+lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights, showSE=TRUE) {
 
   # preparation
   ii <- order(data)
@@ -86,11 +87,18 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights) {
     # point estimate
     hat_p[j] <- factorial(v) * (XhKhXh_inv %*% t(XhKh_temp) %*% Y_temp)[v+1] / bw[j]^v / n
 
+    if (showSE) {
     # standard error estimate
-    # upper diagonal matrix
-    G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
-    G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
-    G <- G %*% XhKh_temp / n
+    F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
+    G <- XhKh_temp[nh[j]:1, ]
+    for (jj in 1:ncol(G)) {
+      G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
+    }
+
+    ## upper diagonal matrix
+    #G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
+    #G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
+    #G <- G %*% XhKh_temp / n
     G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
     G <- t(G) %*% G / n
 
@@ -113,6 +121,7 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights) {
     #V <- XhKhXh_inv %*% G %*% XhKhXh_inv / bw[j]
 
     se_p[j] <- factorial(v) * sqrt( V[v+1,v+1] / (n * bw[j]^(2*v)) )
+    }
 
     if (q > p) {
       Xh_q_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:q)))
@@ -126,11 +135,19 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights) {
       # point estimate
       hat_q[j] <- factorial(v) * (XhKhXh_inv %*% t(XhKh_temp) %*% Y_temp)[v+1] / bw[j]^v / n
 
+      if (showSE) {
       # standard error estimate
-      # upper diagonal matrix
-      G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
-      G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
-      G <- G %*% XhKh_temp / n
+      # standard error estimate
+      F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
+      G <- XhKh_temp[nh[j]:1, ]
+      for (jj in 1:ncol(G)) {
+        G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
+      }
+
+      ## upper diagonal matrix
+      #G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
+      #G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
+      #G <- G %*% XhKh_temp / n
       G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
       G <- t(G) %*% G / n
 
@@ -153,6 +170,7 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights) {
       #V <- XhKhXh_inv %*% G %*% XhKhXh_inv / bw[j]
 
       se_q[j] <- factorial(v) * sqrt( V[v+1,v+1] / (n*bw[j]^(2*v)) )
+      }
     }
   }
 

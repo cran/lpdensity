@@ -7,7 +7,7 @@
 lpdensity.plot(..., alpha = NULL, type = NULL, CItype = NULL,
   title = "", xlabel = "", ylabel = "", lty = NULL, lwd = NULL,
   lcol = NULL, pty = NULL, pwd = NULL, pcol = NULL, CIshade = NULL,
-  CIcol = NULL)
+  CIcol = NULL, legendTitle = NULL, legendGroups = NULL)
 }
 \arguments{
 \item{...}{Objects returned by \code{\link{lpdensity}}.}
@@ -68,6 +68,10 @@ for green, \code{4} for blue.
 For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
 more than one is provided, they will be applied to data series
 accordingly.}
+
+\item{legendTitle}{String, title of legend.}
+
+\item{legendGroups}{String Vector, group names used in legend.}
 }
 \value{
 \item{}{A stadnard \code{ggplot} object is returned, hence can be used for further customization.}
@@ -91,7 +95,7 @@ est1 <- lpdensity(data = X[X<=0], grid = seq(-2.5, 0, 0.05), bwselect = "IMSE",
   scale = sum(X<=0)/length(X))
 est2 <- lpdensity(data = X[X>0],  grid = seq(0, 2, 0.05), bwselect = "IMSE",
   scale = sum(X>0)/length(X))
-lpdensity.plot(est1, est2)
+lpdensity.plot(est1, est2, legendTitle="My Plot", legendGroups=c("Left", "Right"))
 
 }
 \references{
