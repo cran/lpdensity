@@ -2,9 +2,9 @@
 #' @title  Local Polynomial Density Estimation and Inference
 #'
 #' @description \code{lpdensity} implements the local polynomial regression based density (and derivatives)
-#'   estimator proposed in Cattaneo, Jansson and Ma (2017a). This command can also be
+#'   estimator proposed in \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Cattaneo, Jansson and Ma (2017a)}. This command can also be
 #'   used to obtain smoothed estimates for cumulative distribution functions. See
-#'   Cattaneo, Jansson and Ma (2017b) for more implementation details and illustrations.
+#'   \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{Cattaneo, Jansson and Ma (2017b)} for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpbwdensity}} for data-driven bandwidth selection,
 #'   and \code{\link{lpdensity.plot}} for density plot with robust confidence interval.
@@ -55,7 +55,7 @@
 #' \item{opt}{A list containing options passed to the function.}
 #'
 #' @references
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Regression Distribution Estimators}. Working Paper, University of Michigan.
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Polynomial Density Estimators}. Working Paper, University of Michigan.
 #'
 #' M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
 #'

@@ -1,9 +1,9 @@
 ################################################################################
-#' @title Data-driven Bandwidth Selection for Local Polynomial Density Estimation
+#' @title Data-driven Bandwidth Selection for Local Polynomial Density Estimators
 #'
 #' @description \code{lpbwdensity} implements the bandwidth selector for local polynomial
-#'   based density (and derivatives) estimation, proposed in Cattaneo, Jansson and Ma (2017a).
-#'   See Cattaneo, Jansson and Ma (2017b) for more implementation details and illustrations.
+#'   based density (and derivatives) estimation, proposed in \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Cattaneo, Jansson and Ma (2017a)}.
+#'   See \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{Cattaneo, Jansson and Ma (2017b)} for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpdensity}} for local polynomial density estimation.
 #'
@@ -42,7 +42,7 @@
 #' \item{opt}{A list containing options passed to the function.}
 #'
 #' @references
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Regression Distribution Estimators}. Working Paper, University of Michigan.
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Polynomial Density Estimators}. Working Paper, University of Michigan.
 #'
 #' M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
 #'
