@@ -3,7 +3,7 @@
 #'
 #' @description \code{lpdensity.plot} plots estimated density/derivatives. This command
 #'   can also be used to plot smoothed distribution function. See
-#'   \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{Cattaneo, Jansson and Ma (2017b)} for more implementation details and illustrations.
+#'   \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{Cattaneo, Jansson and Ma (2019b)} for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpdensity}} for local polynomial based density
 #'   and derivatives estimation.
@@ -63,17 +63,17 @@
 #' @return
 #' \item{}{A stadnard \code{ggplot} object is returned, hence can be used for further customization.}
 #'
+#' @references
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. Working paper.
+#'
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
+#'
 #' @author
 #' Matias D. Cattaneo, University of Michigan. \email{cattaneo@umich.edu}.
 #'
 #' Michael Jansson, University of California, Berkeley. \email{mjansson@econ.berkeley.edu}.
 #'
 #' Xinwei Ma (maintainer), University of Michigan. \email{xinweima@umich.edu}.
-#'
-#' @references
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Polynomial Density Estimators}. Working Paper, University of Michigan.
-#'
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
 #'
 #' @seealso \code{\link{lpdensity}}
 #'

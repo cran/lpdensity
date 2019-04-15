@@ -2,9 +2,9 @@
 #' @title  Local Polynomial Density Estimation and Inference
 #'
 #' @description \code{lpdensity} implements the local polynomial regression based density (and derivatives)
-#'   estimator proposed in \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Cattaneo, Jansson and Ma (2017a)}. This command can also be
+#'   estimator proposed in \href{https://arxiv.org/abs/1811.11512}{Cattaneo, Jansson and Ma (2019a)}. This command can also be
 #'   used to obtain smoothed estimates for cumulative distribution functions. See
-#'   \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{Cattaneo, Jansson and Ma (2017b)} for more implementation details and illustrations.
+#'   \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{Cattaneo, Jansson and Ma (2019b)} for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpbwdensity}} for data-driven bandwidth selection,
 #'   and \code{\link{lpdensity.plot}} for density plot with robust confidence interval.
@@ -55,9 +55,9 @@
 #' \item{opt}{A list containing options passed to the function.}
 #'
 #' @references
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Polynomial Density Estimators}. Working Paper, University of Michigan.
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. Working paper.
 #'
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
 #'
 #' @author
 #' Matias D. Cattaneo, University of Michigan. \email{cattaneo@umich.edu}.
@@ -392,8 +392,8 @@ summary.CJMlpdensity <- function(object, ...) {
     cat("\n")
   }
 
-  cat(format("grid"            , width=14, justify="right"))
-  cat(format("bw"              , width=10, justify="right"))
+  cat(format("Grid"            , width=14, justify="right"))
+  cat(format("B.W."              , width=10, justify="right"))
   cat(format("Eff.n"           , width=8 , justify="right"))
   cat(format("Est."            , width=10, justify="right"))
   cat(format("Error"           , width=10, justify="right"))

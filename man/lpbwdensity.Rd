@@ -5,9 +5,9 @@
 \title{Data-driven Bandwidth Selection for Local Polynomial Density Estimators}
 \usage{
 lpbwdensity(data, grid = NULL, bwselect = c("mse-dpi", "imse-dpi",
-  "mse-rot", "imse-rot"), p = NULL, v = NULL, kernel = c("triangular",
-  "uniform", "epanechnikov"), Cweights = NULL, Pweights = NULL,
-  regularize = TRUE)
+  "mse-rot", "imse-rot"), p = NULL, v = NULL,
+  kernel = c("triangular", "uniform", "epanechnikov"), Cweights = NULL,
+  Pweights = NULL, regularize = TRUE)
 }
 \arguments{
 \item{data}{Numeric vector or one dimensional matrix / data frame, the raw data.}
@@ -51,8 +51,8 @@ are available locally.}
 }
 \description{
 \code{lpbwdensity} implements the bandwidth selector for local polynomial
-  based density (and derivatives) estimation, proposed in \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Cattaneo, Jansson and Ma (2017a)}.
-  See \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{Cattaneo, Jansson and Ma (2017b)} for more implementation details and illustrations.
+  based density (and derivatives) estimation, proposed in \href{https://arxiv.org/abs/1811.11512}{Cattaneo, Jansson and Ma (2019a)}.
+  See \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{Cattaneo, Jansson and Ma (2019b)} for more implementation details and illustrations.
 
   Companion command: \code{\link{lpdensity}} for local polynomial density estimation.
 
@@ -65,9 +65,9 @@ summary(lpbwdensity(X))
 
 }
 \references{
-M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Polynomial Density Estimators}. Working Paper, University of Michigan.
+M. D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. Working paper.
 
-M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
+M. D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
 }
 \seealso{
 \code{\link{lpdensity}}.

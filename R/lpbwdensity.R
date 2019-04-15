@@ -2,8 +2,8 @@
 #' @title Data-driven Bandwidth Selection for Local Polynomial Density Estimators
 #'
 #' @description \code{lpbwdensity} implements the bandwidth selector for local polynomial
-#'   based density (and derivatives) estimation, proposed in \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Cattaneo, Jansson and Ma (2017a)}.
-#'   See \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{Cattaneo, Jansson and Ma (2017b)} for more implementation details and illustrations.
+#'   based density (and derivatives) estimation, proposed in \href{https://arxiv.org/abs/1811.11512}{Cattaneo, Jansson and Ma (2019a)}.
+#'   See \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{Cattaneo, Jansson and Ma (2019b)} for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpdensity}} for local polynomial density estimation.
 #'
@@ -42,9 +42,9 @@
 #' \item{opt}{A list containing options passed to the function.}
 #'
 #' @references
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017a). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_LocPolDensity.pdf}{Simple Local Polynomial Density Estimators}. Working Paper, University of Michigan.
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. Working paper.
 #'
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2017b). \href{http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Jansson-Ma_2017_lpdensity.pdf}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working Paper, University of Michigan.
+#' M. D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
 #'
 #' @author
 #' Matias D. Cattaneo, University of Michigan. \email{cattaneo@umich.edu}.
@@ -281,8 +281,8 @@ summary.CJMlpbwdensity <- function(object, ...) {
   ### print output
   cat(paste(rep("=", 14 + 10 + 8), collapse="")); cat("\n")
 
-  cat(format("grid"            , width=14, justify="right"))
-  cat(format("bw"              , width=10, justify="right"))
+  cat(format("Grid"            , width=14, justify="right"))
+  cat(format("B.W."              , width=10, justify="right"))
   cat(format("Eff.n"           , width=8 , justify="right"))
   cat("\n")
 
