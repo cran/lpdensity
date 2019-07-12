@@ -80,7 +80,7 @@ accordingly.}
 \description{
 \code{lpdensity.plot} plots estimated density/derivatives. This command
   can also be used to plot smoothed distribution function. See
-  \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{Cattaneo, Jansson and Ma (2019b)} for more implementation details and illustrations.
+  Cattaneo, Jansson and Ma (2019b) for more implementation details and illustrations.
 
   Companion command: \code{\link{lpdensity}} for local polynomial based density
   and derivatives estimation.
@@ -89,28 +89,35 @@ accordingly.}
   visit \url{https://sites.google.com/site/nppackages/}.
 }
 \examples{
+# Generate a random sample
 set.seed(42); X <- rnorm(2000)
 
+# Generate a density discontinuity at 0
 X <- X - 0.5; X[X>0] <- X[X>0] * 2
-est1 <- lpdensity(data = X[X<=0], grid = seq(-2.5, 0, 0.05), bwselect = "IMSE",
+
+# Density estimation, left of 0 (scaled by the relative sample size)
+est1 <- lpdensity(data = X[X<=0], grid = seq(-2.5, 0, 0.05), bwselect = "imse-dpi",
   scale = sum(X<=0)/length(X))
-est2 <- lpdensity(data = X[X>0],  grid = seq(0, 2, 0.05), bwselect = "IMSE",
+# Density estimation, right of 0 (scaled by the relative sample size)
+est2 <- lpdensity(data = X[X>0],  grid = seq(0, 2, 0.05), bwselect = "imse-dpi",
   scale = sum(X>0)/length(X))
+
+# Plot
 lpdensity.plot(est1, est2, legendTitle="My Plot", legendGroups=c("Left", "Right"))
 
 }
 \references{
-M. D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. Working paper.
+M.D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
 
-M. D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
+M.D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://arxiv.org/abs/1906.06529}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
 }
 \seealso{
 \code{\link{lpdensity}}
 }
 \author{
-Matias D. Cattaneo, University of Michigan. \email{cattaneo@umich.edu}.
+Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
 
-Michael Jansson, University of California, Berkeley. \email{mjansson@econ.berkeley.edu}.
+Michael Jansson, University of California Berkeley. \email{mjansson@econ.berkeley.edu}.
 
-Xinwei Ma (maintainer), University of Michigan. \email{xinweima@umich.edu}.
+Xinwei Ma (maintainer), University of California San Diego. \email{x1ma@ucsd.edu}.
 }

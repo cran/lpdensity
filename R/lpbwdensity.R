@@ -2,8 +2,8 @@
 #' @title Data-driven Bandwidth Selection for Local Polynomial Density Estimators
 #'
 #' @description \code{lpbwdensity} implements the bandwidth selector for local polynomial
-#'   based density (and derivatives) estimation, proposed in \href{https://arxiv.org/abs/1811.11512}{Cattaneo, Jansson and Ma (2019a)}.
-#'   See \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{Cattaneo, Jansson and Ma (2019b)} for more implementation details and illustrations.
+#'   based density (and derivatives) estimation, proposed in Cattaneo, Jansson and Ma (2019a).
+#'   See Cattaneo, Jansson and Ma (2019b) for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpdensity}} for local polynomial density estimation.
 #'
@@ -42,21 +42,24 @@
 #' \item{opt}{A list containing options passed to the function.}
 #'
 #' @references
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. Working paper.
+#' M.D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
 #'
-#' M. D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
+#' M.D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://arxiv.org/abs/1906.06529}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
 #'
 #' @author
-#' Matias D. Cattaneo, University of Michigan. \email{cattaneo@umich.edu}.
+#' Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
 #'
-#' Michael Jansson, University of California, Berkeley. \email{mjansson@econ.berkeley.edu}.
+#' Michael Jansson, University of California Berkeley. \email{mjansson@econ.berkeley.edu}.
 #'
-#' Xinwei Ma (maintainer), University of Michigan. \email{xinweima@umich.edu}.
+#' Xinwei Ma (maintainer), University of California San Diego. \email{x1ma@ucsd.edu}.
 #'
 #' @seealso \code{\link{lpdensity}}.
 #'
 #' @examples
-#' set.seed(42); X <- rnorm(1000)
+#' # Generate a random sample
+#' set.seed(42); X <- rnorm(2000)
+#'
+#' # Construct bandwidth
 #' summary(lpbwdensity(X))
 #'
 #' @export
@@ -70,7 +73,7 @@ lpbwdensity <- function(data, grid=NULL, bwselect=c("mse-dpi", "imse-dpi", "mse-
   # data
   data <- as.vector(data)
   if (any(is.na(data))) {
-    warning("Missing data will be ignored.\n")
+    warning(paste(sum(is.na(data)), " missing ", switch((sum(is.na(data))>1)+1, "observation is", "observations are"), " ignored.\n", sep=""))
     data <- data[!is.na(data)]
   }
   n <- length(data)
@@ -88,7 +91,7 @@ lpbwdensity <- function(data, grid=NULL, bwselect=c("mse-dpi", "imse-dpi", "mse-
     grid <- as.vector(grid)
     ng <- length(grid)
     if(!is.numeric(grid)) {
-      stop("Grid points has to be numeric.\n")
+      stop("Grid points have to be numeric.\n")
     }
   }
 
@@ -147,7 +150,7 @@ lpbwdensity <- function(data, grid=NULL, bwselect=c("mse-dpi", "imse-dpi", "mse-
   } else if (!is.numeric(Cweights)) {
     stop("Counterfactual weights incorrectly specified.\n")
   } else if (length(Cweights) != n) {
-    stop("Counterfactual weights has to be the same length as sample.\n")
+    stop("Counterfactual weights have to be the same length as sample.\n")
   } else {
     flag_no_Cweights <- FALSE
   }
@@ -159,9 +162,9 @@ lpbwdensity <- function(data, grid=NULL, bwselect=c("mse-dpi", "imse-dpi", "mse-
   } else if (!is.numeric(Pweights)) {
     stop("Probability weights incorrectly specified.\n")
   } else if (length(Pweights) != n) {
-    stop("Probability weights has to be the same length as sample.\n")
+    stop("Probability weights have to be the same length as sample.\n")
   } else if (any(Pweights < 0)) {
-    stop("Probability weights has to be nonnegative.\n")
+    stop("Probability weights have to be nonnegative.\n")
   } else{
     flag_no_Pweights <- FALSE
   }

@@ -64,9 +64,9 @@ or \code{Pweights}.}
 }
 \description{
 \code{lpdensity} implements the local polynomial regression based density (and derivatives)
-  estimator proposed in \href{https://arxiv.org/abs/1811.11512}{Cattaneo, Jansson and Ma (2019a)}. This command can also be
-  used to obtain smoothed estimates for cumulative distribution functions. See
-  \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{Cattaneo, Jansson and Ma (2019b)} for more implementation details and illustrations.
+  estimator proposed in Cattaneo, Jansson and Ma (2019a). This command can also be
+  used to obtain smoothed estimates of cumulative distribution functions. See
+  Cattaneo, Jansson and Ma (2019b) for more implementation details and illustrations.
 
   Companion command: \code{\link{lpbwdensity}} for data-driven bandwidth selection,
   and \code{\link{lpdensity.plot}} for density plot with robust confidence interval.
@@ -75,23 +75,26 @@ or \code{Pweights}.}
   visit \url{https://sites.google.com/site/nppackages/}.
 }
 \examples{
+# Generate a random sample
 set.seed(42); X <- rnorm(2000)
+
+# Estimate density and report results
 est1 <- lpdensity(data = X, bwselect = "imse-dpi")
 summary(est1)
 
 }
 \references{
-M. D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. Working paper.
+M.D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
 
-M. D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2019_lpdensity.pdf?attredirects=0}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
+M.D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://arxiv.org/abs/1906.06529}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
 }
 \seealso{
 \code{\link{lpbwdensity}} and \code{\link{lpdensity.plot}}.
 }
 \author{
-Matias D. Cattaneo, University of Michigan. \email{cattaneo@umich.edu}.
+Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
 
-Michael Jansson, University of California, Berkeley. \email{mjansson@econ.berkeley.edu}.
+Michael Jansson, University of California Berkeley. \email{mjansson@econ.berkeley.edu}.
 
-Xinwei Ma (maintainer), University of Michigan. \email{xinweima@umich.edu}.
+Xinwei Ma (maintainer), University of California San Diego. \email{x1ma@ucsd.edu}.
 }

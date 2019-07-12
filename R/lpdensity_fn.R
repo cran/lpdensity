@@ -95,10 +95,6 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights, sh
       G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
     }
 
-    ## upper diagonal matrix
-    #G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
-    #G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
-    #G <- G %*% XhKh_temp / n
     G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
     G <- t(G) %*% G / n
 
@@ -113,12 +109,6 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights, sh
     G2 <- t(G2) %*% G2 * sum(weights_normal[index_temp_2]^2) / n
 
     V <- XhKhXh_inv %*% (G+G1+G2) %*% XhKhXh_inv
-
-    #temp <- apply(XhKh_temp, MARGIN=2, FUN=sum)
-    #G <- (matrix(temp, ncol=p+1, nrow=nh[j], byrow=TRUE) - apply(XhKh_temp, MARGIN=2, FUN=cumsum)) / n
-    #G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
-    #G <- t(G) %*% G / n
-    #V <- XhKhXh_inv %*% G %*% XhKhXh_inv / bw[j]
 
     se_p[j] <- factorial(v) * sqrt( V[v+1,v+1] / (n * bw[j]^(2*v)) )
     }
@@ -137,17 +127,12 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights, sh
 
       if (showSE) {
       # standard error estimate
-      # standard error estimate
       F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
       G <- XhKh_temp[nh[j]:1, ]
       for (jj in 1:ncol(G)) {
         G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
       }
 
-      ## upper diagonal matrix
-      #G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
-      #G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
-      #G <- G %*% XhKh_temp / n
       G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
       G <- t(G) %*% G / n
 
@@ -162,12 +147,6 @@ lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights, sh
       G2 <- t(G2) %*% G2 * sum(weights_normal[index_temp_2]^2) / n
 
       V <- XhKhXh_inv %*% (G+G1+G2) %*% XhKhXh_inv
-
-      #temp <- apply(XhKh_temp, MARGIN=2, FUN=sum)
-      #G <- (matrix(temp, ncol=q+1, nrow=nh[j], byrow=TRUE) - apply(XhKh_temp, MARGIN=2, FUN=cumsum)) / n
-      #G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
-      #G <- t(G) %*% G / n
-      #V <- XhKhXh_inv %*% G %*% XhKhXh_inv / bw[j]
 
       se_q[j] <- factorial(v) * sqrt( V[v+1,v+1] / (n*bw[j]^(2*v)) )
       }

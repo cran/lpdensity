@@ -464,7 +464,7 @@ bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
       K_temp <- 0.75*(1 - (X_temp)^2) / h1
     }
     K_temp   <- Pweights[index_temp] * K_temp
-    
+
     # estimate Cp matrix
     if (p > 0) {
       C_p_hat <- matrix(apply(
@@ -509,14 +509,11 @@ bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
       # estimate G matrix
       F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
       G <- XhKh_temp[sum(index_temp):1, ]
-      
+
       for (jj in 1:ncol(G)) {
         G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
       }
 
-      #G <- diag(1, sum(index_temp)); G[col(G) > row(G)] <- 1
-      #G <- G - matrix(Fn[index_temp], ncol=sum(index_temp), nrow=sum(index_temp), byrow=TRUE)
-      #G <- G %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp) / n
       G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
       G <- t(G) %*% G / n
 
@@ -531,11 +528,6 @@ bw_MSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
       G2 <- t(G2) %*% G2 * sum(weights_normal[index_temp_2]^2) / n
       G_hat <- G + G1 + G2
 
-      #temp <- apply(sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp), MARGIN=2, FUN=sum)
-      #G_hat <- (matrix(temp, ncol=p+1, nrow=sum(index_temp), byrow=TRUE) -
-      #            apply(sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp), MARGIN=2, FUN=cumsum)) / n
-      #G_hat <- sweep(G_hat, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
-      #G_hat <- t(G_hat) %*% G_hat / n / h1
     } else {
       # estimate T matrix
       G_hat <- t(X_temp) %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp^2) / n
@@ -738,11 +730,6 @@ bw_IMSE  <- function(data, grid, p, v, kernel, Cweights, Pweights, regularize) {
       G2 <- t(G2) %*% G2 * sum(weights_normal[index_temp_2]^2) / n
       G_hat <- G + G1 + G2
 
-      #temp <- apply(sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp), MARGIN=2, FUN=sum)
-      #G_hat <- (matrix(temp, ncol=p+1, nrow=sum(index_temp), byrow=TRUE) -
-      #            apply(sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp), MARGIN=2, FUN=cumsum)) / n
-      #G_hat <- sweep(G_hat, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
-      #G_hat <- t(G_hat) %*% G_hat / n / h1
     } else {
       # estimate T matrix
       G_hat <- t(X_temp) %*% sweep(X_temp, MARGIN=1, FUN="*", STATS=K_temp^2) / n
