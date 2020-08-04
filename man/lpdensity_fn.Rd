@@ -5,35 +5,38 @@
 \title{Supporting Function for \code{\link{lpdensity}}}
 \usage{
 lpdensity_fn(data, grid, bw, p, q, v, kernel, Cweights, Pweights,
-  showSE = TRUE)
+  massPoints, showSE = TRUE)
 }
 \arguments{
-\item{data}{Numeric vector or one dimensional matrix / data frame, the raw data.}
+\item{data}{Numeric vector or one dimensional matrix/data frame, the raw data.}
 
-\item{grid}{Numeric vector or one dimensional matrix / data frame, the grid on which
+\item{grid}{Numeric vector or one dimensional matrix/data frame, the grid on which
 density is estimated.}
 
-\item{bw}{Numeric vector or one dimensional matrix / data frame, the bandwidth
+\item{bw}{Numeric vector or one dimensional matrix/data frame, the bandwidth
 used for estimation. Should be strictly positive, and have the same length as
 \code{grid}.}
 
-\item{p}{Integer, the order of the local-polynomial used to construct point
-estimates. Should be greater than 1.}
+\item{p}{Integer, nonnegative, the order of the local-polynomial used to construct point
+estimates.}
 
-\item{q}{Integer, the order of the local-polynomial used to construct point
-estimates. Should be greater than 1. When set to \code{0}, corresponding estimates
-will not be constructed.}
+\item{q}{Integer, nonnegative, the order of the local-polynomial used to construct
+confidence interval (a.k.a. the bias correction order).}
 
-\item{v}{Integer, the derivative to be estimated. Should be nonnegative.}
+\item{v}{Integer, nonnegative, the derivative of distribution function to be estimated. \code{0} for
+the distribution function, \code{1} (default) for the density funtion, etc.}
 
 \item{kernel, }{String, the kernel function, should be one of \code{"triangular"},
 \code{"uniform"} or \code{"epanechnikov"}.}
 
-\item{Cweights}{Numeric vector or one dimensional matrix / data frame, the weights used
+\item{Cweights}{Numeric vector or one dimensional matrix/data frame, the weights used
 for counterfactual distribution construction. Should have the same length as sample size.}
 
-\item{Pweights}{Numeric vector or one dimensional matrix / data frame, the weights used
+\item{Pweights}{Numeric vector or one dimensional matrix/data frame, the weights used
 in sampling. Should have the same length as sample size, and nonnegative.}
+
+\item{massPoints}{Boolean, whether whether point estimates and standard errors
+should be corrected if there are mass points in the data.}
 
 \item{showSE}{\code{TRUE} (default) or \code{FALSE}, whether standard errors should be computed.}
 }

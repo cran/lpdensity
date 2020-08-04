@@ -7,13 +7,13 @@
 Cgenerate(k, p, low = -1, up = 1, kernel = "triangular")
 }
 \arguments{
-\item{k, }{Integer, extra order (usually p+1).}
+\item{k}{Nonnegative integer, extra order (usually p+1).}
 
-\item{p, }{Integer, polynomial order.}
+\item{p}{Nonnegative integer, the polynomial order.}
 
-\item{low, up, }{Numeric, between -1 and 1, region of integration.}
+\item{low, up}{Scalar, between -1 and 1, region of integration.}
 
-\item{kernel, }{String, the kernel.}
+\item{kernel}{String, the kernel function.}
 }
 \value{
 \item{}{A (p+1)-by-1 matrix.}

@@ -7,14 +7,16 @@
 normal_dgps(x, v, mean, sd)
 }
 \arguments{
-\item{x, }{Numeric, point of evaluation.}
+\item{x}{Scalar, point of evaluation.}
 
-\item{v, }{Numeric and nonnegative. The derivative, with 0 being cdf and 1 being pdf.'}
+\item{v}{Nonnegative integer, the derivative order (0 indicates cdf, 1 indicates pdf, etc.).}
 
-\item{mean, sd, }{the mean and standard deviation.}
+\item{mean}{Scalar, the mean of the normal distribution.}
+
+\item{sd}{Strictly positive scalar, the standard deviation of the normal distribution.}
 }
 \value{
-\item{}{A scalar.}
+\item{}{Scalar.}
 }
 \description{
 Calculates density and higher order derivatives for Gaussian models.

@@ -1,63 +1,100 @@
 ################################################################################
 #' @title  Local Polynomial Density Estimation and Inference
 #'
-#' @description \code{lpdensity} implements the local polynomial regression based density (and derivatives)
-#'   estimator proposed in Cattaneo, Jansson and Ma (2019a). This command can also be
-#'   used to obtain smoothed estimates of cumulative distribution functions. See
-#'   Cattaneo, Jansson and Ma (2019b) for more implementation details and illustrations.
+#' @description \code{\link{lpdensity}} implements the local polynomial regression based density (and derivatives)
+#'   estimator proposed in Cattaneo, Jansson and Ma (2020a).  Robust bias-corrected inference methods,
+#'   both pointwise (confidence intervals) and uniform (confidence bands), are also implemented
+#'   following the results in Cattaneo, Jansson and Ma (2020a) and Cattaneo, Jansson and Ma (2020b).
+#'   See Cattaneo, Jansson and Ma (2020c) for more implementation details and illustrations.
 #'
-#'   Companion command: \code{\link{lpbwdensity}} for data-driven bandwidth selection,
-#'   and \code{\link{lpdensity.plot}} for density plot with robust confidence interval.
+#'   Companion command: \code{\link{lpbwdensity}} for bandwidth selection.
 #'
-#'   For more details, and related Stata and R packages useful for empirical analysis,
-#'   visit \url{https://sites.google.com/site/nppackages/}.
+#'   Related \code{Stata} and \code{R} packages useful for nonparametric estimation and inference are
+#'   available at \url{https://sites.google.com/site/nppackages/}.
 #'
-#' @param data Numeric vector or one dimensional matrix / data frame, the raw data.
-#' @param grid Numeric vector or one dimensional matrix / data frame, the grid on which
-#'   density is estimated. When set to default, grid points will be chosen as 0.05-0.95
-#'   percentiles of the data, with 0.05 step size.
-#' @param bw Numeric vector or one dimensional matrix / data frame, the bandwidth
+#' @param data Numeric vector or one dimensional matrix/data frame, the raw data.
+#' @param grid Numeric, specifies the grid of evaluation points. When set to default, grid points
+#'   will be chosen as 0.05-0.95 percentiles of the data, with a step size of 0.05.
+#' @param bw Numeric, specifies the bandwidth
 #'   used for estimation. Can be (1) a positive scalar (common
 #'   bandwidth for all grid points); or (2) a positive numeric vector specifying bandwidths for
 #'   each grid point (should be the same length as \code{grid}).
-#' @param p Integer, nonnegative, the order of the local-polynomial used to construct point
-#'   estimates. (Default is 2.)
-#' @param q Integer, nonnegative, the order of the local-polynomial used to construct pointwise
-#'   confidence interval (a.k.a. the bias correction order). Default is \code{p+1}. When specified
+#' @param p Nonnegative integer, specifies the order of the local polynomial used to construct point
+#'   estimates. (Default is \code{2}.)
+#' @param q Nonnegative integer, specifies the order of the local polynomial used to construct
+#'   confidence intervals/bands (a.k.a. the bias correction order). Default is \code{p+1}. When set to be
 #'   the same as \code{p}, no bias correction will be performed. Otherwise it should be
 #'   strictly larger than \code{p}.
-#' @param v Integer, nonnegative, the derivative of distribution function to be estimated. \code{0} for
+#' @param v Nonnegative integer, specifies the derivative of the distribution function to be estimated. \code{0} for
 #'   the distribution function, \code{1} (default) for the density funtion, etc.
-#' @param bwselect String, the method for data-driven bandwidth selection. This option will be
-#'   ignored if \code{bw} is provided. Can be (1) \code{"mse-dpi"} (default, mean squared error-optimal
-#'   bandwidth selected for each grid point); or (2) \code{"imse-dpi"} (integrated MSE-optimal bandwidth,
+#' @param kernel String, specifies the kernel function, should be one of \code{"triangular"}, \code{"uniform"}, and
+#'   \code{"epanechnikov"}.
+#' @param scale Numeric, specifies how
+#'   estimates are scaled. For example, setting this parameter to 0.5 will scale down both the
+#'   point estimates and standard errors by half. Default is \code{1}. This parameter is useful if only
+#'   part of the sample is employed for estimation, and should not be confused with \code{Cweights}
+#'   or \code{Pweights}.
+#' @param massPoints \code{TRUE} (default) or \code{FALSE}, specifies whether point estimates and standard errors
+#'   should be adjusted if there are mass points in the data.
+#' @param bwselect String, specifies the method for data-driven bandwidth selection. This option will be
+#'   ignored if \code{bw} is provided. Options are (1) \code{"mse-dpi"} (default, mean squared error-optimal
+#'   bandwidth selected for each grid point); (2) \code{"imse-dpi"} (integrated MSE-optimal bandwidth,
 #'   common for all grid points); (3) \code{"mse-rot"} (rule-of-thumb bandwidth with Gaussian
 #'   reference model); and (4) \code{"imse-rot"} (integrated rule-of-thumb bandwidth with Gaussian
 #'   reference model).
-#' @param kernel String, the kernel function, should be one of \code{"triangular"}, \code{"uniform"} or
-#'   \code{"epanechnikov"}.
-#' @param Cweights, Numeric vector or one dimensional matrix / data frame, the weights used
-#'   for counterfactual distribution construction. Should have the same length as sample size.
-#' @param Pweights Numeric vector or one dimensional matrix / data frame, the weights used
-#'   in sampling. Should have the same length as sample size and nonnegative.
-#' @param scale Numeric, scaling factor for the final estimate. This parameter controls how
-#'   estimates are scaled. For example, setting this parameter to 0.5 will scale down both the
-#'   point estimates and standard errors by half. By default it is 1. This parameter is used if only
-#'   part of the sample is used for estimation, and should not be confused with \code{Cweights}
-#'   or \code{Pweights}.
+#' @param stdVar \code{TRUE} (default) or \code{FALSE}, specifies whether the data should be standardized for
+#'   bandwidth selection.
+#' @param regularize \code{TRUE} (default) or \code{FALSE}, specifies whether the bandwidth should be
+#'   regularized. When set to \code{TRUE}, the bandwidth is chosen such that the local region includes
+#'   at least \code{nLocalMin} observations and at least \code{nUniqueMin} unique observations.
+#' @param nLocalMin Nonnegative integer, specifies the minimum number of observations in each local neighborhood. This option
+#'   will be ignored if \code{regularize=FALSE}. Default is \code{20+p+1}.
+#' @param nUniqueMin Nonnegative integer, specifies the minimum number of unique observations in each local neighborhood. This option
+#'   will be ignored if \code{regularize=FALSE}. Default is \code{20+p+1}.
+#' @param Cweights, Numeric, specifies the weights used
+#'   for counterfactual distribution construction. Should have the same length as the data.
+#' @param Pweights Numeric, specifies the weights used
+#'   in sampling. Should have the same length as the data.
 #'
 #' @return
-#' \item{Estimate}{A matrix containing (1) \code{grid} (grid points), (2) \code{bw} (bandwidths), (3) \code{nh}
-#'   (effective/local sample sizes), (4) \code{f_p} (point estimates with p-th order local polynomial),
-#'   (5) \code{f_q} (point estimates with q-th order local polynomial, only if option \code{q} is nonzero),
-#'   (6) \code{se_p} (standard error corresponding to \code{f_p}), and (7) \code{se_q} (standard error
+#' \item{Estimate}{A matrix containing (1) \code{grid} (grid points), (2) \code{bw} (bandwidths),
+#'   (3) \code{nh} (number of observations in each local neighborhood),
+#'   (4) \code{nhu} (number of unique observations in each local neighborhood),
+#'   (5) \code{f_p} (point estimates with p-th order local polynomial),
+#'   (6) \code{f_q} (point estimates with q-th order local polynomial, only if option \code{q} is nonzero),
+#'   (7) \code{se_p} (standard error corresponding to \code{f_p}), and (8) \code{se_q} (standard error
 #'   corresponding to \code{f_q}).}
+#' \item{CovMat_p}{The variance-covariance matrix corresponding to \code{f_p}.}
+#' \item{CovMat_q}{The variance-covariance matrix corresponding to \code{f_q}.}
 #' \item{opt}{A list containing options passed to the function.}
 #'
-#' @references
-#' M.D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
+#' @details Bias correction is only used for the construction of confidence intervals/bands, but not for point
+#'   estimation. The point estimates, denoted by \code{f_p}, are constructed using local polynomial estimates
+#'   of order \code{p}, while the centering of the confidence intervals/bands, denoted by \code{f_q}, are constructed
+#'   using local polynomial estimates of order \code{q}. The confidence intervals/bands take the form:
+#'   \code{[f_q - cv * SE(f_q) , f_q + cv * SE(f_q)]}, where \code{cv} denotes the appropriate critical value and \code{SE(f_q)}
+#'   denotes an standard error estimate for the centering of the confidence interval/band. As a result,
+#'   the confidence intervals/bands may not be centered at the point estimates because they have been bias-corrected.
+#'   Setting \code{q} and \code{p} to be equal results on centered at the point estimate confidence intervals/bands,
+#'   but requires undersmoothing for valid inference (i.e., (I)MSE-optimal bandwdith for the density point estimator
+#'   cannot be used). Hence the bandwidth would need to be specified manually when \code{q=p}, and the
+#'   point estimates will not be (I)MSE optimal. See Cattaneo, Jansson and Ma (2020a, 2020b) for details, and also
+#'   Calonico, Cattaneo, and Farrell (2018, 2020) for robust bias correction methods.
 #'
-#' M.D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://arxiv.org/abs/1906.06529}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
+#'   Sometimes the density point estimates may lie outside of the confidence intervals/bands, which can happen
+#'   if the underlying distribution exhibits high curvature at some evaluation point(s). One possible solution
+#'   in this case is to increase the polynomial order \code{p} or to employ a smaller bandwidth.
+#'
+#' @references
+#'   Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2018. \href{https://sites.google.com/site/nppackages/nprobust/Calonico-Cattaneo-Farrell_2018_JASA.pdf}{On the Effect of Bias Estimation on Coverage Accuracy in Nonparametric Inference}. \emph{Journal of the American Statistical Association}, 113(522): 767-779.
+#'
+#'   Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2020. \href{http://sites.google.com/site/nppackages/nprobust/Calonico-Cattaneo-Farrell_2020_CEopt.pdf}{Coverage Error Optimal Confidence Intervals for Local Polynomial Regression}. Working paper.
+#'
+#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2020a. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
+#'
+#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2020b. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JoE.pdf}{Local Regression Distribution Estimators}. Working paper.
+#'
+#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2020c. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. Working paper.
 #'
 #' @author
 #' Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
@@ -66,7 +103,7 @@
 #'
 #' Xinwei Ma (maintainer), University of California San Diego. \email{x1ma@ucsd.edu}.
 #'
-#' @seealso \code{\link{lpbwdensity}} and \code{\link{lpdensity.plot}}.
+#' @seealso Supported methods: \code{\link{coef.lpdensity}}, \code{\link{confint.lpdensity}}, \code{\link{plot.lpdensity}}, \code{\link{print.lpdensity}}, \code{\link{summary.lpdensity}}, \code{\link{vcov.lpdensity}}.
 #'
 #' @examples
 #' # Generate a random sample
@@ -76,11 +113,33 @@
 #' est1 <- lpdensity(data = X, bwselect = "imse-dpi")
 #' summary(est1)
 #'
+#' # Report results for a subset of grid points
+#' summary(est1, grid=est1$Estimate[4:10, "grid"])
+#' summary(est1, gridIndex=4:10)
+#'
+#' # Report the 99% uniform confidence band
+#' set.seed(42) # fix the seed for simulating critical values
+#' summary(est1, alpha=0.01, CIuniform=TRUE)
+#'
+#' # Plot the estimates and confidence intervals
+#' plot(est1, legendTitle="My Plot", legendGroups=c("X"))
+#'
+#' # Plot the estimates and the 99% uniform confidence band
+#' set.seed(42) # fix the seed for simulating critical values
+#' plot(est1, alpha=0.01, CIuniform=TRUE, legendTitle="My Plot", legendGroups=c("X"))
+#'
+#' # Adding a histogram to the background
+#' plot(est1, legendTitle="My Plot", legendGroups=c("X"),
+#'   hist=TRUE, histData=X, histBreaks=seq(-1.5, 1.5, 0.25))
+#'
 #' @export
 lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
-                      bwselect=c("mse-dpi", "imse-dpi", "mse-rot", "imse-rot"),
                       kernel=c("triangular", "uniform", "epanechnikov"),
-                      Cweights=NULL, Pweights=NULL, scale=NULL) {
+                      scale=NULL, massPoints=TRUE,
+                      bwselect=c("mse-dpi", "imse-dpi", "mse-rot", "imse-rot"),
+                      stdVar=TRUE,
+                      regularize=TRUE, nLocalMin=NULL, nUniqueMin=NULL,
+                      Cweights=NULL, Pweights=NULL) {
   ################################################################################
   # Input Error Handling
   ################################################################################
@@ -90,9 +149,10 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
     warning(paste(sum(is.na(data)), " missing ", switch((sum(is.na(data))>1)+1, "observation is", "observations are"), " ignored.\n", sep=""))
     data <- data[!is.na(data)]
   }
+
   n <- length(data)
   if (!is.numeric(data) | length(data)==0) {
-    stop("Data has to be numeric, and cannot be empty.\n")
+    stop("Data should be numeric, and cannot be empty.\n")
   }
 
   # grid
@@ -105,7 +165,7 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
     grid <- as.vector(grid)
     ng <- length(grid)
     if(!is.numeric(grid)) {
-      stop("Grid points has to be numeric.\n")
+      stop("Grid points should be numeric.\n")
     }
   }
 
@@ -160,7 +220,7 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   if (length(q) == 0) {
     flag_no_q <- TRUE
     q <- p + 1
-  } else if ((length(q) > 1) | !(q[1]%in%c(0:20)) | (q[1]<p)) {
+  } else if ((length(q) != 1) | !(q[1]%in%c(0:20)) | (q[1]<p)) {
     stop("Polynomial order (for bias correction) q incorrectly specified.\n")
   } else {
     flag_no_q <- FALSE
@@ -170,7 +230,7 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   if (length(v) == 0) {
     flag_no_v <- TRUE
     v <- min(1, p)
-  } else if ((length(v) > 1) | !(v[1]%in%c(0:20)) | (v[1]>p)) {
+  } else if ((length(v) != 1) | !(v[1]%in%c(0:20)) | (v[1]>p)) {
     stop("Derivative order v incorrectly specified.\n")
   } else {
     flag_no_v <- FALSE
@@ -197,7 +257,7 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   } else if (!is.numeric(Cweights)) {
     stop("Counterfactual weights incorrectly specified.\n")
   } else if (length(Cweights) != n) {
-    stop("Counterfactual weights has to be the same length as sample.\n")
+    stop("Counterfactual weights should have the same length as sample.\n")
   } else {
     flag_no_Cweights <- FALSE
   }
@@ -209,9 +269,9 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   } else if (!is.numeric(Pweights)) {
     stop("Probability weights incorrectly specified.\n")
   } else if (length(Pweights) != n) {
-    stop("Probability weights has to be the same length as sample.\n")
+    stop("Probability weights should have the same length as sample.\n")
   } else if (any(Pweights < 0)) {
-    stop("Probability weights has to be nonnegative.\n")
+    stop("Probability weights should be nonnegative.\n")
   } else{
     flag_no_Pweights <- FALSE
   }
@@ -220,10 +280,51 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   if (length(scale) == 0) {
     flag_no_scale <- TRUE
     scale <- 1
-  } else if (length(scale) > 1 | !is.numeric(scale) | scale < 0) {
+  } else if (length(scale) != 1 | !is.numeric(scale) | scale <= 0) {
     stop("Scale incorrectly specified.\n")
   } else {
     flag_no_scale <- FALSE
+  }
+
+  # regularize
+  if (length(regularize) == 0) {
+    regularize <- TRUE
+  } else if (length(regularize) > 1 | !regularize[1]%in%c(TRUE, FALSE)) {
+    stop("Regularization parameter incorrectly specified.\n")
+  }
+
+  # massPoints
+  if (length(massPoints) == 0) {
+    massPoints <- TRUE
+  } else if (length(massPoints) > 1 | !massPoints[1]%in%c(TRUE, FALSE)) {
+    stop("Option massPoints incorrectly specified.\n")
+  }
+
+  # stdVar
+  if (length(stdVar) == 0) {
+    stdVar <- TRUE
+  } else if (length(stdVar) > 1 | !stdVar[1]%in%c(TRUE, FALSE)) {
+    stop("Option stdVar incorrectly specified.\n")
+  }
+
+  # nLocalMin
+  if (length(nLocalMin) == 0) { nLocalMin <- 20 + p + 1 }
+  if (!is.numeric(nLocalMin) | is.na(nLocalMin)) {
+    stop("Option nLocalMin incorrectly specified.\n")
+  } else if (ceiling(nLocalMin) < 0) {
+    stop("Option nLocalMin incorrectly specified.\n")
+  } else {
+    nLocalMin <- ceiling(nLocalMin)
+  }
+
+  # nUniqueMin
+  if (length(nUniqueMin) == 0) { nUniqueMin <- 20 + p + 1 }
+  if (!is.numeric(nUniqueMin) | is.na(nUniqueMin)) {
+    stop("Option nUniqueMin incorrectly specified.\n")
+  } else if (ceiling(nUniqueMin) < 0) {
+    stop("Option nUniqueMin incorrectly specified.\n")
+  } else {
+    nUniqueMin <- ceiling(nUniqueMin)
   }
 
   ################################################################################
@@ -232,8 +333,7 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   trim_index <- (Pweights == 0)
   if (all(trim_index)) {
     stop("All weights are zero.\n")
-  }
-  if (any(trim_index)) {
+  } else {
     data <- data[!trim_index]
     Cweights <- Cweights[!trim_index]
     Pweights <- Pweights[!trim_index]
@@ -241,189 +341,54 @@ lpdensity <- function(data, grid=NULL, bw=NULL, p=NULL, q=NULL, v=NULL,
   if (abs(sum(Cweights * Pweights)) <= .Machine$double.eps * 10) {
     stop("Composited weights (Cweights * Pweights) are numerically zero.\n")
   }
-  if (length(data) < 50 + p + 1) stop("Not enough observations.\n")
 
   ################################################################################
   # Bandwidth selection
   ################################################################################
 
   if (flag_no_bw & bwselect[1]=="mse-rot") {
-    temp <- bw_ROT(data=data, grid=grid, p=p, v=v, kernel=kernel, regularize=TRUE)
-    temp[is.na(temp)] <- 0
-    bw <- temp
+    bw <- bw_ROT( data=data, grid=grid, p=p, v=v, kernel=kernel, Cweights=Cweights, Pweights=Pweights, massPoints=massPoints, stdVar=stdVar, regularize=regularize, nLocalMin=nLocalMin, nUniqueMin=nUniqueMin)
   }
   if (flag_no_bw & bwselect[1]=="imse-rot") {
-    temp <- bw_IROT(data=data, grid=grid, p=p, v=v, kernel=kernel, regularize=TRUE)
-    if (is.na(temp)) temp <- 0
-    bw <- rep(temp, ng)
+    bw <- bw_IROT(data=data, grid=grid, p=p, v=v, kernel=kernel, Cweights=Cweights, Pweights=Pweights, massPoints=massPoints, stdVar=stdVar, regularize=regularize, nLocalMin=nLocalMin, nUniqueMin=nUniqueMin)
+    bw <- rep(bw, length(grid))
   }
   if (flag_no_bw & bwselect[1]=="mse-dpi") {
-    temp <- bw_MSE(data=data, grid=grid, p=p, v=v, kernel=kernel, Cweights=Cweights, Pweights=Pweights, regularize=TRUE)
-    temp[is.na(temp)] <- 0
-    bw <- temp
+    bw <- bw_MSE( data=data, grid=grid, p=p, v=v, kernel=kernel, Cweights=Cweights, Pweights=Pweights, massPoints=massPoints, stdVar=stdVar, regularize=regularize, nLocalMin=nLocalMin, nUniqueMin=nUniqueMin)
   }
   if (flag_no_bw & bwselect[1]=="imse-dpi") {
-    temp <- bw_IMSE(data=data, grid=grid, p=p, v=v, kernel=kernel, Cweights=Cweights, Pweights=Pweights, regularize=TRUE)
-    if (is.na(temp)) temp <- 0
-    bw <- rep(temp, ng)
+    bw <- bw_IMSE(data=data, grid=grid, p=p, v=v, kernel=kernel, Cweights=Cweights, Pweights=Pweights, massPoints=massPoints, stdVar=stdVar, regularize=regularize, nLocalMin=nLocalMin, nUniqueMin=nUniqueMin)
+    bw <- rep(bw, length(grid))
   }
 
   ################################################################################
   # Point Estimation
   ################################################################################
-  Estimate <- lpdensity_fn(data=data, grid=grid, bw=bw, p=p, q=q, v=v, kernel=kernel,
-                       Cweights=Cweights, Pweights=Pweights, showSE=TRUE)
-  Estimate[, c("f_p", "f_q", "se_p", "se_q")] <- Estimate[, c("f_p", "f_q", "se_p", "se_q")] * scale
+  Temp_Result <- lpdensity_fn(data=data, grid=grid, bw=bw, p=p, q=q, v=v, kernel=kernel,
+                       Cweights=Cweights, Pweights=Pweights, massPoints=massPoints, showSE=TRUE)
 
-  row.names(Estimate) <- 1:ng
+  Temp_Result$Estimate[, c("f_p", "f_q", "se_p", "se_q")] <- Temp_Result$Estimate[, c("f_p", "f_q", "se_p", "se_q")] * scale
+  rownames(Temp_Result$Estimate) <- 1:ng
 
-  Result <- list(Estimate=Estimate,
+  Temp_Result$CovMat_p <- Temp_Result$CovMat_p * scale^2
+  Temp_Result$CovMat_q <- Temp_Result$CovMat_q * scale^2
+  rownames(Temp_Result$CovMat_p) <- colnames(Temp_Result$CovMat_p) <- 1:ng
+  rownames(Temp_Result$CovMat_q) <- colnames(Temp_Result$CovMat_q) <- 1:ng
+
+  Result <- list(Estimate=Temp_Result$Estimate,
+                 CovMat_p=Temp_Result$CovMat_p,
+                 CovMat_q=Temp_Result$CovMat_q,
                  opt=list(
-                   p=p, q=q, v=v, kernel=kernel, scale=scale, n=n, ng=ng,
-                   bwselect=bwselect,
+                   p=p, q=q, v=v, kernel=kernel, scale=scale, massPoints=massPoints, n=n, ng=ng,
+                   bwselect=bwselect, stdVar=stdVar,
+                   regularize=regularize, nLocalMin=nLocalMin, nUniqueMin=nUniqueMin,
                    data_min=min(data), data_max=max(data),
                    grid_min=min(grid), grid_max=max(grid)
                  ))
-  class(Result) <- "CJMlpdensity"
-
-  ################################################################################
-  # Bootstrap
-  ################################################################################
+  class(Result) <- c("lpdensity")
 
   ################################################################################
   # Return
   ################################################################################
   return(Result)
 }
-
-################################################################################
-#' Internal function.
-#'
-#' @param x Class \code{CJMlpdensity} objects.
-#'
-#' @keywords internal
-#' @export
-print.CJMlpdensity <- function(x, ...) {
-
-  cat("Call: lpdensity\n\n")
-
-  cat(paste("Sample size                                      ", x$opt$n,        "\n", sep=""))
-  cat(paste("Polynomial order for point estimation    (p=)    ", x$opt$p,        "\n", sep=""))
-  cat(paste("Order of derivative estimated            (v=)    ", x$opt$v,        "\n", sep=""))
-  if (x$opt$q > 0) {
-    cat(paste("Polynomial order for confidence interval (q=)    ", x$opt$q,        "\n", sep=""))
-  } else {
-    cat(paste("Polynomial order for confidence interval (q=)    ", "p",            "\n", sep=""))
-  }
-  cat(paste("Kernel function                                  ", x$opt$kernel,   "\n", sep=""))
-  if (x$opt$scale != 1) {
-    cat(paste("Scaling factor                                   ",  x$opt$scale,   "\n", sep=""))
-  }
-  cat(paste("Bandwidth method                                 ", x$opt$bwselect, "\n", sep=""))
-  cat("\n")
-
-  cat("Use summary(...) to show estimates.\n")
-}
-
-################################################################################
-#' Internal function.
-#'
-#' @param object Class \code{CJMlpdensity} objects.
-#'
-#' @keywords internal
-#' @export
-summary.CJMlpdensity <- function(object, ...) {
-  x <- object
-  args <- list(...)
-  if (is.null(args[['alpha']])) { alpha <- 0.05 } else { alpha <- args[['alpha']] }
-  if (is.null(args[['sep']]))   { sep <- 5 } else { sep <- args[['sep']] }
-
-  cat("Call: lpdensity\n\n")
-
-  cat(paste("Sample size                              (n=)    ", x$opt$n,        "\n", sep=""))
-  cat(paste("Polynomial order for point estimation    (p=)    ", x$opt$p,        "\n", sep=""))
-  if (x$opt$v == 0) {
-  cat(paste("Distribution function estimated          (v=)    ", x$opt$v,        "\n", sep=""))
-  } else if (x$opt$v == 1) {
-  cat(paste("Density function estimated               (v=)    ", x$opt$v,        "\n", sep=""))
-  } else {
-  cat(paste("Order of derivative estimated            (v=)    ", x$opt$v,        "\n", sep=""))
-  }
-  if (x$opt$q > x$opt$p) {
-  cat(paste("Polynomial order for confidence interval (q=)    ", x$opt$q,        "\n", sep=""))
-  } else {
-  cat(paste("Polynomial order for confidence interval (q=)    ", "p",            "\n", sep=""))
-  }
-  cat(paste("Kernel function                                  ", x$opt$kernel,   "\n", sep=""))
-  if (x$opt$scale != 1) {
-  cat(paste("Scaling factor                                   ",  x$opt$scale,   "\n", sep=""))
-  }
-  cat(paste("Bandwidth selection method                       ", x$opt$bwselect, "\n", sep=""))
-  cat("\n")
-
-  ### compute CI
-  z <- qnorm(1 - alpha / 2)
-
-  if (x$opt$q == x$opt$p) {
-    CI_l <- x$Estimate[, "f_p"] - x$Estimate[, "se_p"] * z;
-    CI_r <- x$Estimate[, "f_p"] + x$Estimate[, "se_p"] * z;
-  } else {
-    CI_l <- x$Estimate[, "f_q"] - x$Estimate[, "se_q"] * z;
-    CI_r <- x$Estimate[, "f_q"] + x$Estimate[, "se_q"] * z;
-  }
-
-  ### print output
-  cat(paste(rep("=", 14 + 10 + 8 + 10 + 10 + 25), collapse="")); cat("\n")
-
-  if (x$opt$q > x$opt$p) {
-    cat(format(" ", width= 14 ))
-    cat(format(" ", width= 10 ))
-    cat(format(" ", width= 8  ))
-    cat(format("Point", width= 10, justify="right"))
-    cat(format("Std." , width= 10, justify="right"))
-    cat(format("Robust B.C."
-               , width=25, justify="centre"))
-    cat("\n")
-  } else {
-    cat(format(" ", width= 14 ))
-    cat(format(" ", width= 10 ))
-    cat(format(" ", width=  8 ))
-    cat(format("Point", width= 10, justify="right"))
-    cat(format("Std." , width= 10, justify="right"))
-    cat(format("Conventional"
-               , width=25, justify="centre"))
-    cat("\n")
-  }
-
-  cat(format("Grid"            , width=14, justify="right"))
-  cat(format("B.W."              , width=10, justify="right"))
-  cat(format("Eff.n"           , width=8 , justify="right"))
-  cat(format("Est."            , width=10, justify="right"))
-  cat(format("Error"           , width=10, justify="right"))
-  cat(format(paste("[ ", floor((1-alpha)*100), "%", " C.I. ]", sep="")
-                               , width=25, justify="centre"))
-  cat("\n")
-
-  cat(paste(rep("=", 14 + 10 + 8 + 10 + 10 + 25), collapse="")); cat("\n")
-
-  for (j in 1:nrow(x$Estimate)) {
-    cat(format(toString(j), width=4))
-    cat(format(sprintf("%6.4f", x$Estimate[j, "grid"]), width=10, justify="right"))
-    cat(format(sprintf("%6.4f", x$Estimate[j, "bw"])  , width=10, justify="right"))
-    cat(format(sprintf("%8.0f", x$Estimate[j, "nh"])  , width=8 , justify="right"))
-    cat(format(sprintf("%6.4f", x$Estimate[j, "f_p"]) , width=10, justify="right"))
-    cat(format(
-      paste(sprintf("%6.4f", x$Estimate[j, "se_p"]), sep=""), width=10, justify="right"))
-    cat(format(
-      paste(sprintf("%7.4f", CI_l[j]), " , ", sep="")  , width=14, justify="right"))
-    cat(format(
-      paste(sprintf("%7.4f", CI_r[j]), sep=""), width=11, justify="left"))
-    cat("\n")
-    if (is.numeric(sep)) if (sep > 0) if (j %% sep == 0) {
-      cat(paste(rep("-", 14 + 10 + 8 + 10 + 10 + 25), collapse="")); cat("\n")
-    }
-  }
-
-  cat(paste(rep("=", 14 + 10 + 8 + 10 + 10 + 25), collapse="")); cat("\n")
-}
-

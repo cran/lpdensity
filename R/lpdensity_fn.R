@@ -6,23 +6,25 @@
 #'
 #' Recommend: use \code{\link{lpdensity}}.
 #'
-#' @param data Numeric vector or one dimensional matrix / data frame, the raw data.
-#' @param grid Numeric vector or one dimensional matrix / data frame, the grid on which
+#' @param data Numeric vector or one dimensional matrix/data frame, the raw data.
+#' @param grid Numeric vector or one dimensional matrix/data frame, the grid on which
 #'   density is estimated.
-#' @param bw Numeric vector or one dimensional matrix / data frame, the bandwidth
+#' @param bw Numeric vector or one dimensional matrix/data frame, the bandwidth
 #'   used for estimation. Should be strictly positive, and have the same length as
 #'   \code{grid}.
-#' @param p Integer, the order of the local-polynomial used to construct point
-#'   estimates. Should be greater than 1.
-#' @param q Integer, the order of the local-polynomial used to construct point
-#'   estimates. Should be greater than 1. When set to \code{0}, corresponding estimates
-#'   will not be constructed.
-#' @param v Integer, the derivative to be estimated. Should be nonnegative.
+#' @param p Integer, nonnegative, the order of the local-polynomial used to construct point
+#'   estimates.
+#' @param q Integer, nonnegative, the order of the local-polynomial used to construct
+#'   confidence interval (a.k.a. the bias correction order).
+#' @param v Integer, nonnegative, the derivative of distribution function to be estimated. \code{0} for
+#'   the distribution function, \code{1} (default) for the density funtion, etc.
 #' @param kernel, String, the kernel function, should be one of \code{"triangular"},
 #'   \code{"uniform"} or \code{"epanechnikov"}.
-#' @param Cweights Numeric vector or one dimensional matrix / data frame, the weights used
+#' @param massPoints Boolean, whether whether point estimates and standard errors
+#'   should be corrected if there are mass points in the data.
+#' @param Cweights Numeric vector or one dimensional matrix/data frame, the weights used
 #'   for counterfactual distribution construction. Should have the same length as sample size.
-#' @param Pweights Numeric vector or one dimensional matrix / data frame, the weights used
+#' @param Pweights Numeric vector or one dimensional matrix/data frame, the weights used
 #'   in sampling. Should have the same length as sample size, and nonnegative.
 #' @param showSE \code{TRUE} (default) or \code{FALSE}, whether standard errors should be computed.
 #'
@@ -40,124 +42,194 @@
 #'   if \code{q} is greater than 0.}
 #'
 #' @keywords internal
-lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights, showSE=TRUE) {
+lpdensity_fn <- function(data, grid, bw, p, q, v, kernel, Cweights, Pweights, massPoints, showSE=TRUE) {
 
   # preparation
-  ii <- order(data)
+  ii <- order(data, decreasing=FALSE)
   data <- data[ii]
   Cweights <- Cweights[ii]
   Pweights <- Pweights[ii]
   n    <- length(data)
   ng   <- length(grid)
-  Fn   <- cumsum(Cweights * Pweights) / sum(Cweights * Pweights)
-  nh   <- rep(NA, ng)
+
+  dataUnique  <- lpdensityUnique(data)
+  freqUnique  <- dataUnique$freq
+  indexUnique <- dataUnique$index
+  dataUnique  <- dataUnique$unique
+  nUnique     <- length(dataUnique)
+
+  # whether considering mass points when constructing the empirical distribution function
+  if (massPoints) {
+    Fn <- rep((cumsum(Cweights * Pweights) / sum(Cweights * Pweights))[indexUnique], times=freqUnique)
+  } else {
+    Fn <- cumsum(Cweights * Pweights) / sum(Cweights * Pweights)
+  }
+
   weights_normal <- Cweights * Pweights / sum(Cweights * Pweights) * n
   Cweights <- Cweights / sum(Cweights) * n
   Pweights <- Pweights / sum(Pweights) * n
 
-  hat_p <- rep(NA, ng); se_p  <- rep(NA, ng)
-  hat_q <- rep(NA, ng); se_q <- rep(NA, ng)
+  weights_normalUnique <- cumsum(weights_normal)[indexUnique]
+  if (nUnique > 1) { weights_normalUnique <- weights_normalUnique - c(0, weights_normalUnique[1:(nUnique-1)]) }
+
+  CweightsUnique <- cumsum(Cweights)[indexUnique]
+  if (nUnique > 1) { CweightsUnique <- CweightsUnique - c(0, CweightsUnique[1:(nUnique-1)]) }
+
+  PweightsUnique <- cumsum(Pweights)[indexUnique]
+  if (nUnique > 1) { PweightsUnique <- PweightsUnique - c(0, PweightsUnique[1:(nUnique-1)]) }
+
+  hat_p <- rep(NA, ng); se_p <- rep(NA, ng); iff_p <- matrix(NA, nrow=n, ncol=ng)
+  hat_q <- rep(NA, ng); se_q <- rep(NA, ng); iff_q <- matrix(NA, nrow=n, ncol=ng)
+  nh <- rep(NA, ng)
+  nhu <- rep(NA, ng)
 
   for (j in 1:ng) {
     index_temp <- abs(data - grid[j]) <= bw[j]
-    nh[j] <- sum(index_temp)
+    nh[j]  <- sum(index_temp)
+    nhu[j] <- sum(index_temp[indexUnique])
 
     # LHS and RHS variables
-    Y_temp    <- matrix(Fn[index_temp], ncol=1)
-    Xh_temp   <- matrix((data - grid[j])[index_temp], ncol=1) / bw[j]
-    Xh_p_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:p)))
-    if (p == 0) Xh_p_temp <- t(Xh_p_temp)
+    if (massPoints) {
+      Y_temp    <- matrix(Fn[indexUnique], ncol=1)
+      Xh_temp   <- matrix((data[indexUnique] - grid[j]), ncol=1) / bw[j]
+      Xh_p_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:p)))
+      if (p == 0) {
+        Xh_p_temp <- matrix(Xh_p_temp, ncol=1)
+      }
 
-    # weights
-    if (kernel == "triangular") {
-      Kh_temp <- (1 - abs(Xh_temp)) / bw[j]
-    } else if (kernel == "uniform") {
-      Kh_temp <- 0.5 / bw[j]
-    } else {
-      Kh_temp <- 0.75 * (1 - Xh_temp^2) / bw[j]
-    }
-    Kh_temp   <- Pweights[index_temp] * Kh_temp
+      # weights
+      if (kernel == "triangular") {
+        Kh_temp <- ((1 - abs(Xh_temp)) / bw[j]) * index_temp[indexUnique]
+      } else if (kernel == "uniform") {
+        Kh_temp <- (0.5 / bw[j]) * index_temp[indexUnique]
+      } else {
+        Kh_temp <- (0.75 * (1 - Xh_temp^2) / bw[j]) * index_temp[indexUnique]
+      }
 
-    XhKh_temp <- sweep(Xh_p_temp, MARGIN=1, FUN="*", STATS=Kh_temp)
-    XhKhXh_inv <- try(
-      solve(t(Xh_p_temp) %*% XhKh_temp / n)
-      , silent=TRUE)
-    if (is.character(XhKhXh_inv)) { next }
+      Xh_p_Kh_temp <- sweep(Xh_p_temp, MARGIN=1, FUN="*", STATS=Kh_temp)
+      Xh_p_Kh_Pweights_temp <- sweep(Xh_p_Kh_temp, MARGIN=1, FUN="*", STATS=PweightsUnique)
 
-    # point estimate
-    hat_p[j] <- factorial(v) * (XhKhXh_inv %*% t(XhKh_temp) %*% Y_temp)[v+1] / bw[j]^v / n
-
-    if (showSE) {
-    # standard error estimate
-    F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
-    G <- XhKh_temp[nh[j]:1, ]
-    for (jj in 1:ncol(G)) {
-      G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
-    }
-
-    G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
-    G <- t(G) %*% G / n
-
-    index_temp_1 <- data - grid[j] < -1 * bw[j]
-    index_temp_2 <- data - grid[j] >      bw[j]
-
-    G1 <- matrix(1 - Fn[index_temp], nrow=1)
-    G1 <- G1 %*% XhKh_temp / n
-    G1 <- t(G1) %*% G1 * sum(weights_normal[index_temp_1]^2) / n
-    G2 <- matrix(0 - Fn[index_temp], nrow=1)
-    G2 <- G2 %*% XhKh_temp / n
-    G2 <- t(G2) %*% G2 * sum(weights_normal[index_temp_2]^2) / n
-
-    V <- XhKhXh_inv %*% (G+G1+G2) %*% XhKhXh_inv
-
-    se_p[j] <- factorial(v) * sqrt( V[v+1,v+1] / (n * bw[j]^(2*v)) )
-    }
-
-    if (q > p) {
-      Xh_q_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:q)))
-
-      XhKh_temp <- sweep(Xh_q_temp, MARGIN=1, FUN="*", STATS=Kh_temp)
       XhKhXh_inv <- try(
-        solve(t(Xh_q_temp) %*% XhKh_temp / n)
+        solve(t(Xh_p_temp[index_temp[indexUnique], , drop=FALSE]) %*% Xh_p_Kh_Pweights_temp[index_temp[indexUnique], , drop=FALSE] / n)
         , silent=TRUE)
       if (is.character(XhKhXh_inv)) { next }
 
       # point estimate
-      hat_q[j] <- factorial(v) * (XhKhXh_inv %*% t(XhKh_temp) %*% Y_temp)[v+1] / bw[j]^v / n
-
-      if (showSE) {
-      # standard error estimate
-      F_XhKh_temp <- matrix(Fn[index_temp], nrow=1) %*% XhKh_temp / n
-      G <- XhKh_temp[nh[j]:1, ]
-      for (jj in 1:ncol(G)) {
-        G[, jj] <- cumsum(G[, jj]) / n - F_XhKh_temp[1, jj]
+      hat_p[j] <- factorial(v) * (XhKhXh_inv %*% t(Xh_p_Kh_Pweights_temp[index_temp[indexUnique], , drop=FALSE]) %*% Y_temp[index_temp[indexUnique], , drop=FALSE])[v+1] / bw[j]^v / n
+    } else {
+      Y_temp    <- matrix(Fn, ncol=1)
+      Xh_temp   <- matrix((data - grid[j]), ncol=1) / bw[j]
+      Xh_p_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:p)))
+      if (p == 0) {
+        Xh_p_temp <- matrix(Xh_p_temp, ncol=1)
       }
 
-      G <- sweep(G, MARGIN=1, FUN="*", STATS=weights_normal[index_temp])
-      G <- t(G) %*% G / n
+      # weights
+      if (kernel == "triangular") {
+        Kh_temp <- ((1 - abs(Xh_temp)) / bw[j]) * index_temp
+      } else if (kernel == "uniform") {
+        Kh_temp <- (0.5 / bw[j]) * index_temp
+      } else {
+        Kh_temp <- (0.75 * (1 - Xh_temp^2) / bw[j]) * index_temp
+      }
 
-      index_temp_1 <- data - grid[j] < -1 * bw[j]
-      index_temp_2 <- data - grid[j] >      bw[j]
+      Xh_p_Kh_temp <- sweep(Xh_p_temp, MARGIN=1, FUN="*", STATS=Kh_temp)
+      Xh_p_Kh_Pweights_temp <- sweep(Xh_p_Kh_temp, MARGIN=1, FUN="*", STATS=Pweights)
 
-      G1 <- matrix(1 - Fn[index_temp], nrow=1)
-      G1 <- G1 %*% XhKh_temp / n
-      G1 <- t(G1) %*% G1 * sum(weights_normal[index_temp_1]^2) / n
-      G2 <- matrix(0 - Fn[index_temp], nrow=1)
-      G2 <- G2 %*% XhKh_temp / n
-      G2 <- t(G2) %*% G2 * sum(weights_normal[index_temp_2]^2) / n
+      XhKhXh_inv <- try(
+        solve(t(Xh_p_temp[index_temp, , drop=FALSE]) %*% Xh_p_Kh_Pweights_temp[index_temp, , drop=FALSE] / n)
+        , silent=TRUE)
+      if (is.character(XhKhXh_inv)) { next }
 
-      V <- XhKhXh_inv %*% (G+G1+G2) %*% XhKhXh_inv
+      # point estimate
+      hat_p[j] <- factorial(v) * (XhKhXh_inv %*% t(Xh_p_Kh_Pweights_temp[index_temp, , drop=FALSE]) %*% Y_temp[index_temp, , drop=FALSE])[v+1] / bw[j]^v / n
+    }
+    if (showSE) {
+      # standard error estimate
+      if (massPoints) {
+        F_Xh_p_Kh_temp <- t(Y_temp) %*% Xh_p_Kh_Pweights_temp / n
 
-      se_q[j] <- factorial(v) * sqrt( V[v+1,v+1] / (n*bw[j]^(2*v)) )
+        G <- matrix(NA, ncol=ncol(Xh_p_Kh_Pweights_temp), nrow=n)
+        for (jj in 1:ncol(G)) {
+          G[, jj] <- (rep((cumsum(Xh_p_Kh_Pweights_temp[nUnique:1, jj]) / n)[nUnique:1], times=freqUnique) - F_Xh_p_Kh_temp[1, jj]) * weights_normal
+        }
+
+        iff_p[, j] <- (XhKhXh_inv %*% t(G))[v+1, ] * factorial(v) / sqrt(n*bw[j]^(2*v))
+      } else {
+        F_Xh_p_Kh_temp <- t(Y_temp) %*% Xh_p_Kh_Pweights_temp / n
+
+        G <- matrix(NA, ncol=ncol(Xh_p_Kh_Pweights_temp), nrow=n)
+        for (jj in 1:ncol(G)) {
+          G[, jj] <- ((cumsum(Xh_p_Kh_Pweights_temp[n:1, jj]) / n)[n:1] - F_Xh_p_Kh_temp[1, jj]) * weights_normal
+        }
+
+        iff_p[, j] <- (XhKhXh_inv %*% t(G))[v+1, ] * factorial(v) / sqrt(n*bw[j]^(2*v))
+      }
+
+    }
+
+    if (q > p) {
+      if (massPoints) {
+        Xh_q_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:q)))
+        Xh_q_Kh_temp <- sweep(Xh_q_temp, MARGIN=1, FUN="*", STATS=Kh_temp)
+        Xh_q_Kh_Pweights_temp <- sweep(Xh_q_Kh_temp, MARGIN=1, FUN="*", STATS=PweightsUnique)
+
+        XhKhXh_inv <- try(
+          solve(t(Xh_q_temp[index_temp[indexUnique], , drop=FALSE]) %*% Xh_q_Kh_Pweights_temp[index_temp[indexUnique], , drop=FALSE] / n)
+          , silent=TRUE)
+        if (is.character(XhKhXh_inv)) { next }
+
+        # point estimate
+        hat_q[j] <- factorial(v) * (XhKhXh_inv %*% t(Xh_q_Kh_Pweights_temp[index_temp[indexUnique], , drop=FALSE]) %*% Y_temp[index_temp[indexUnique], , drop=FALSE])[v+1] / bw[j]^v / n
+      } else {
+        Xh_q_temp <- t(apply(Xh_temp, MARGIN=1, FUN=function(x) x^(0:q)))
+        Xh_q_Kh_temp <- sweep(Xh_q_temp, MARGIN=1, FUN="*", STATS=Kh_temp)
+        Xh_q_Kh_Pweights_temp <- sweep(Xh_q_Kh_temp, MARGIN=1, FUN="*", STATS=Pweights)
+
+        XhKhXh_inv <- try(
+          solve(t(Xh_q_temp[index_temp, , drop=FALSE]) %*% Xh_q_Kh_Pweights_temp[index_temp, , drop=FALSE] / n)
+          , silent=TRUE)
+        if (is.character(XhKhXh_inv)) { next }
+
+        # point estimate
+        hat_q[j] <- factorial(v) * (XhKhXh_inv %*% t(Xh_q_Kh_Pweights_temp[index_temp, , drop=FALSE]) %*% Y_temp[index_temp, , drop=FALSE])[v+1] / bw[j]^v / n
+      }
+
+
+      if (showSE) {
+        # standard error estimate
+        if (massPoints) {
+          F_Xh_q_Kh_temp <- t(Y_temp) %*% Xh_q_Kh_Pweights_temp / n
+
+          G <- matrix(NA, ncol=ncol(Xh_q_Kh_Pweights_temp), nrow=n)
+          for (jj in 1:ncol(G)) {
+            G[, jj] <- (rep((cumsum(Xh_q_Kh_Pweights_temp[nUnique:1, jj]) / n)[nUnique:1], times=freqUnique) - F_Xh_q_Kh_temp[1, jj]) * weights_normal
+          }
+          iff_q[, j] <- (XhKhXh_inv %*% t(G))[v+1, ] * factorial(v) / sqrt(n*bw[j]^(2*v))
+        } else {
+          F_Xh_q_Kh_temp <- t(Y_temp) %*% Xh_q_Kh_Pweights_temp / n
+
+          G <- matrix(NA, ncol=ncol(Xh_q_Kh_Pweights_temp), nrow=n)
+          for (jj in 1:ncol(G)) {
+            G[, jj] <- ((cumsum(Xh_q_Kh_Pweights_temp[n:1, jj]) / n)[n:1] - F_Xh_q_Kh_temp[1, jj]) * weights_normal
+          }
+          iff_q[, j] <- (XhKhXh_inv %*% t(G))[v+1, ] * factorial(v) / sqrt(n*bw[j]^(2*v))
+        }
       }
     }
   }
 
-  Estimate <- cbind(grid, bw, nh, hat_p, hat_q, se_p, se_q)
-  colnames(Estimate) <- c("grid", "bw", "nh", "f_p", "f_q", "se_p", "se_q")
+  CovMat_p <- t(iff_p) %*% iff_p / n
+  CovMat_q <- t(iff_q) %*% iff_q / n
+
+  se_p <- sqrt(abs(diag(CovMat_p)))
+  se_q <- sqrt(abs(diag(CovMat_q)))
+
+  Estimate <- cbind(grid, bw, nh, nhu, hat_p, hat_q, se_p, se_q)
+  colnames(Estimate) <- c("grid", "bw", "nh", "nhu", "f_p", "f_q", "se_p", "se_q")
   rownames(Estimate) <- c()
 
-  return (Estimate)
+  return(list(Estimate=Estimate, CovMat_p=CovMat_p, CovMat_q=CovMat_q))
 }
 
 

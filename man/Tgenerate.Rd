@@ -7,11 +7,11 @@
 Tgenerate(p, low = -1, up = 1, kernel = "triangular")
 }
 \arguments{
-\item{p, }{Integer, polynomial order.}
+\item{p}{Nonnegative integer, polynomial order.}
 
-\item{low, up, }{Numeric, between -1 and 1, region of integration.}
+\item{low, up}{Scalar, between -1 and 1, the region of integration.}
 
-\item{kernel, }{String, the kernel.}
+\item{kernel}{String, the kernel function.}
 }
 \value{
 \item{}{A (p+1)-by-(p+1) matrix.}

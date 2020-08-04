@@ -7,24 +7,29 @@
 \title{lpdensity: Local Polynomial Density Estimation and Inference}
 \description{
 Without imposing stringent distributional assumptions or shape restrictions,
-  nonparametric density estimation has been popular in economics and other social
+  nonparametric estimation has been popular in economics and other social
   sciences for counterfactual analysis, program evaluation, and policy recommendations.
-  This package implements a novel density estimator based on local polynomial
-  regression, documented in Cattaneo, Jansson and Ma (2019a): \code{\link{lpdensity}}
-  to construct local polynomial based density estimator, \code{\link{lpbwdensity}}
-  to perform data-driven bandwidth selection, and \code{\link{lpdensity.plot}} for
-  density plot with robust confidence interval.
+  This package implements a novel density (and derivatives) estimator based on local polynomial
+  regressions, documented in Cattaneo, Jansson and Ma (2020a) and Cattaneo, Jansson and Ma (2020b).
 
-  The companion software article, Cattaneo, Jansson and Ma (2019b),
-  provides further implementation details and illustrations with simulated data.
-  For related \code{Stata}
-  and \code{R} packages useful for nonparametric data analysis  and statistical inference,
-  visit \url{https://sites.google.com/site/nppackages/}.
+  \code{\link{lpdensity}} implements the local polynomial regression based density (and derivatives)
+  estimator. Robust bias-corrected inference methods, both pointwise (confidence intervals) and
+  uniform (confidence bands), are also implemented. \code{\link{lpbwdensity}} implements the bandwidth
+  selection methods. See Cattaneo, Jansson and Ma (2020c) for more implementation details and illustrations.
+
+  Related \code{Stata} and \code{R} packages useful for nonparametric estimation and inference are
+  available at \url{https://sites.google.com/site/nppackages/}.
 }
 \references{
-M.D. Cattaneo, M. Jansson and X. Ma. (2019a). \href{https://arxiv.org/abs/1811.11512}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
+Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2018. \href{https://sites.google.com/site/nppackages/nprobust/Calonico-Cattaneo-Farrell_2018_JASA.pdf}{On the Effect of Bias Estimation on Coverage Accuracy in Nonparametric Inference}. \emph{Journal of the American Statistical Association}, 113(522): 767-779.
 
-M.D. Cattaneo, M. Jansson and X. Ma. (2019b). \href{https://arxiv.org/abs/1906.06529}{\code{lpdensity}: Local Polynomial Density Estimation and Inference}. Working paper.
+  Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2020. \href{http://sites.google.com/site/nppackages/nprobust/Calonico-Cattaneo-Farrell_2020_CEopt.pdf}{Coverage Error Optimal Confidence Intervals for Local Polynomial Regression}. Working paper.
+
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020a. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
+
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020b. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JoE.pdf}{Local Regression Distribution Estimators}. Working paper.
+
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020c. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. Working paper.
 }
 \author{
 Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
