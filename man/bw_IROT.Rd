@@ -4,8 +4,20 @@
 \alias{bw_IROT}
 \title{Internal function.}
 \usage{
-bw_IROT(data, grid, p, v, kernel, Cweights, Pweights, massPoints, stdVar,
-  regularize, nLocalMin, nUniqueMin)
+bw_IROT(
+  data,
+  grid,
+  p,
+  v,
+  kernel,
+  Cweights,
+  Pweights,
+  massPoints,
+  stdVar,
+  regularize,
+  nLocalMin,
+  nUniqueMin
+)
 }
 \arguments{
 \item{data}{Numeric vector, the data.}

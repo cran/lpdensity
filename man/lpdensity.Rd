@@ -4,12 +4,24 @@
 \alias{lpdensity}
 \title{Local Polynomial Density Estimation and Inference}
 \usage{
-lpdensity(data, grid = NULL, bw = NULL, p = NULL, q = NULL,
-  v = NULL, kernel = c("triangular", "uniform", "epanechnikov"),
-  scale = NULL, massPoints = TRUE, bwselect = c("mse-dpi",
-  "imse-dpi", "mse-rot", "imse-rot"), stdVar = TRUE, regularize = TRUE,
-  nLocalMin = NULL, nUniqueMin = NULL, Cweights = NULL,
-  Pweights = NULL)
+lpdensity(
+  data,
+  grid = NULL,
+  bw = NULL,
+  p = NULL,
+  q = NULL,
+  v = NULL,
+  kernel = c("triangular", "uniform", "epanechnikov"),
+  scale = NULL,
+  massPoints = TRUE,
+  bwselect = c("mse-dpi", "imse-dpi", "mse-rot", "imse-rot"),
+  stdVar = TRUE,
+  regularize = TRUE,
+  nLocalMin = NULL,
+  nUniqueMin = NULL,
+  Cweights = NULL,
+  Pweights = NULL
+)
 }
 \arguments{
 \item{data}{Numeric vector or one dimensional matrix/data frame, the raw data.}
@@ -93,7 +105,7 @@ in sampling. Should have the same length as the data.}
   Companion command: \code{\link{lpbwdensity}} for bandwidth selection.
 
   Related \code{Stata} and \code{R} packages useful for nonparametric estimation and inference are
-  available at \url{https://sites.google.com/site/nppackages/}.
+  available at \url{https://nppackages.github.io/}.
 }
 \details{
 Bias correction is only used for the construction of confidence intervals/bands, but not for point
@@ -142,15 +154,15 @@ plot(est1, legendTitle="My Plot", legendGroups=c("X"),
 
 }
 \references{
-Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2018. \href{https://sites.google.com/site/nppackages/nprobust/Calonico-Cattaneo-Farrell_2018_JASA.pdf}{On the Effect of Bias Estimation on Coverage Accuracy in Nonparametric Inference}. \emph{Journal of the American Statistical Association}, 113(522): 767-779.
+Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2018. \href{https://nppackages.github.io/references/Calonico-Cattaneo-Farrell_2018_JASA.pdf}{On the Effect of Bias Estimation on Coverage Accuracy in Nonparametric Inference}. \emph{Journal of the American Statistical Association}, 113(522): 767-779.
 
-  Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2020. \href{http://sites.google.com/site/nppackages/nprobust/Calonico-Cattaneo-Farrell_2020_CEopt.pdf}{Coverage Error Optimal Confidence Intervals for Local Polynomial Regression}. Working paper.
+  Calonico, S., M. D. Cattaneo, and M. H. Farrell. 2020. \href{https://nppackages.github.io/references/Calonico-Cattaneo-Farrell_2020_CEopt.pdf}{Coverage Error Optimal Confidence Intervals for Local Polynomial Regression}. Working paper.
 
-  Cattaneo, M. D., M. Jansson, and X. Ma. 2020a. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020a. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, 115(531): 1449-1455.
 
-  Cattaneo, M. D., M. Jansson, and X. Ma. 2020b. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JoE.pdf}{Local Regression Distribution Estimators}. Working paper.
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020b. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JoE.pdf}{Local Regression Distribution Estimators}. Working paper.
 
-  Cattaneo, M. D., M. Jansson, and X. Ma. 2020c. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. Working paper.
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020c. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. Working paper.
 }
 \seealso{
 Supported methods: \code{\link{coef.lpdensity}}, \code{\link{confint.lpdensity}}, \code{\link{plot.lpdensity}}, \code{\link{print.lpdensity}}, \code{\link{summary.lpdensity}}, \code{\link{vcov.lpdensity}}.

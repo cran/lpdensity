@@ -4,8 +4,20 @@
 \alias{bw_MSE}
 \title{Internal function.}
 \usage{
-bw_MSE(data, grid, p, v, kernel, Cweights, Pweights, massPoints, stdVar,
-  regularize, nLocalMin, nUniqueMin)
+bw_MSE(
+  data,
+  grid,
+  p,
+  v,
+  kernel,
+  Cweights,
+  Pweights,
+  massPoints,
+  stdVar,
+  regularize,
+  nLocalMin,
+  nUniqueMin
+)
 }
 \arguments{
 \item{data}{Numeric vector, the data.}

@@ -4,13 +4,34 @@
 \alias{plot.lpdensity}
 \title{Plot Method for Local Polynomial Density Estimation and Inference}
 \usage{
-\method{plot}{lpdensity}(..., alpha = NULL, type = NULL, lty = NULL,
-  lwd = NULL, lcol = NULL, pty = NULL, pwd = NULL, pcol = NULL,
-  grid = NULL, CItype = NULL, CIuniform = FALSE, CIsimul = 2000,
-  CIshade = NULL, CIcol = NULL, hist = FALSE, histData = NULL,
-  histBreaks = NULL, histFillCol = 3, histFillShade = 0.2,
-  histLineCol = "white", title = "", xlabel = "", ylabel = "",
-  legendTitle = NULL, legendGroups = NULL)
+\method{plot}{lpdensity}(
+  ...,
+  alpha = NULL,
+  type = NULL,
+  lty = NULL,
+  lwd = NULL,
+  lcol = NULL,
+  pty = NULL,
+  pwd = NULL,
+  pcol = NULL,
+  grid = NULL,
+  CItype = NULL,
+  CIuniform = FALSE,
+  CIsimul = 2000,
+  CIshade = NULL,
+  CIcol = NULL,
+  hist = FALSE,
+  histData = NULL,
+  histBreaks = NULL,
+  histFillCol = 3,
+  histFillShade = 0.2,
+  histLineCol = "white",
+  title = "",
+  xlabel = "",
+  ylabel = "",
+  legendTitle = NULL,
+  legendGroups = NULL
+)
 }
 \arguments{
 \item{...}{Class "lpdensity" object, obtained from calling \code{\link{lpdensity}}.}

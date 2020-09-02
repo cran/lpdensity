@@ -4,12 +4,21 @@
 \alias{lpbwdensity}
 \title{Data-driven Bandwidth Selection for Local Polynomial Density Estimators}
 \usage{
-lpbwdensity(data, grid = NULL, p = NULL, v = NULL,
+lpbwdensity(
+  data,
+  grid = NULL,
+  p = NULL,
+  v = NULL,
   kernel = c("triangular", "uniform", "epanechnikov"),
   bwselect = c("mse-dpi", "imse-dpi", "mse-rot", "imse-rot"),
-  massPoints = TRUE, stdVar = TRUE, regularize = TRUE,
-  nLocalMin = NULL, nUniqueMin = NULL, Cweights = NULL,
-  Pweights = NULL)
+  massPoints = TRUE,
+  stdVar = TRUE,
+  regularize = TRUE,
+  nLocalMin = NULL,
+  nUniqueMin = NULL,
+  Cweights = NULL,
+  Pweights = NULL
+)
 }
 \arguments{
 \item{data}{Numeric vector or one dimensional matrix/data frame, the raw data.}
@@ -72,7 +81,7 @@ This option will be ignored if \code{bwselect} is \code{"mse-rot"} or \code{"ims
   Companion command: \code{\link{lpdensity}} for estimation and robust bias-corrected inference.
 
   Related \code{Stata} and \code{R} packages useful for nonparametric estimation and inference are
-  available at \url{https://sites.google.com/site/nppackages/}.
+  available at \url{https://nppackages.github.io/}.
 }
 \examples{
 # Generate a random sample
@@ -88,11 +97,11 @@ summary(bw1, gridIndex=4:10)
 
 }
 \references{
-Cattaneo, M. D., M. Jansson, and X. Ma. 2020a. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, forthcoming.
+Cattaneo, M. D., M. Jansson, and X. Ma. 2020a. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, 115(531): 1449-1455.
 
-  Cattaneo, M. D., M. Jansson, and X. Ma. 2020b. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JoE.pdf}{Local Regression Distribution Estimators}. Working paper.
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020b. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JoE.pdf}{Local Regression Distribution Estimators}. Working paper.
 
-  Cattaneo, M. D., M. Jansson, and X. Ma. 2020c. \href{https://sites.google.com/site/nppackages/lpdensity/Cattaneo-Jansson-Ma_2020_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. Working paper.
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2020c. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. Working paper.
 }
 \seealso{
 Supported methods: \code{\link{coef.lpbwdensity}}, \code{\link{print.lpbwdensity}}, \code{\link{summary.lpbwdensity}}.

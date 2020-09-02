@@ -4,8 +4,19 @@
 \alias{lpdensity_fn}
 \title{Supporting Function for \code{\link{lpdensity}}}
 \usage{
-lpdensity_fn(data, grid, bw, p, q, v, kernel, Cweights, Pweights,
-  massPoints, showSE = TRUE)
+lpdensity_fn(
+  data,
+  grid,
+  bw,
+  p,
+  q,
+  v,
+  kernel,
+  Cweights,
+  Pweights,
+  massPoints,
+  showSE = TRUE
+)
 }
 \arguments{
 \item{data}{Numeric vector or one dimensional matrix/data frame, the raw data.}
