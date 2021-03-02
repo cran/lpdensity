@@ -108,7 +108,7 @@ summary.lpdensity <- function(object, ...) {
     if (is.null(gridIndex)) {
       gridIndex <- 1:nrow(x$Estimate)
     } else if (!all(gridIndex %in% 1:nrow(x$Estimate))) {
-      stop("Option gridIndex incorrectly specified.\n")
+      stop(paste("Option gridIndex incorrectly specified. Should be integers between 1 and ", nrow(x$Estimate), ".\n", sep=""))
     }
   } else {
     grid <- args[['grid']]
@@ -118,6 +118,9 @@ summary.lpdensity <- function(object, ...) {
       stop("Option grid incorrectly specified.\n")
     } else {
       gridIndex <- rep(NA, length(grid))
+      if (min(grid) < min(x$Estimate[, "grid"]) | max(grid) > max(x$Estimate[, "grid"])) {
+        warning("The reporting range exceeds the original estimation range. Option summary(..., grid=) should be within the estimation range specified by lpdensity(..., grid=).\n")
+      }
       for (j in 1:length(grid)) {
         gridIndex[j] <- which.min(abs(x$Estimate[, "grid"]-grid[j]))
         #gridIndex <- unique(gridIndex)
@@ -318,7 +321,9 @@ summary.lpdensity <- function(object, ...) {
 #'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param grid Numeric vector, specifies a subset of grid points
-#'   to plot point estimates.
+#'   to plot point estimates. This option is effective only if \code{type} is \code{"points"} or
+#'   \code{"both"}; or if \code{CItype} is \code{"ebar"} or
+#'   \code{"all"}.
 #' @param CItype String, one of \code{"region"} (shaded region, default), \code{"line"} (dashed lines),
 #'   \code{"ebar"} (error bars), \code{"all"} (all of the previous) or \code{"none"} (no confidence region),
 #'   how the confidence region should be plotted. If more than one is provided, they will be applied to each data series
@@ -395,7 +400,7 @@ plot.lpdensity <- function(..., alpha=NULL,
                            type=NULL, lty=NULL, lwd=NULL, lcol=NULL, pty=NULL, pwd=NULL, pcol=NULL, grid=NULL,
                            CItype=NULL, CIuniform=FALSE, CIsimul=2000, CIshade=NULL, CIcol=NULL,
                            hist=FALSE, histData=NULL, histBreaks=NULL, histFillCol=3, histFillShade=0.2, histLineCol="white",
-                           title="", xlabel="", ylabel="", legendTitle=NULL, legendGroups=NULL) {
+                           title=NULL, xlabel=NULL, ylabel=NULL, legendTitle=NULL, legendGroups=NULL) {
   ########################################
   # check how many series are passed in
   ########################################
@@ -552,8 +557,12 @@ plot.lpdensity <- function(..., alpha=NULL,
   # looping over input models
   ########################################
   ### all colors
-  col_all <- lty_all <- pty_all <- c()
+
+  col_all <- lty_all <- pty_all <- v_all <- c()
+  estRangeL <- estRangeR <- c() # estimation range
   for (i in 1:nfig) {
+    # get derivative order
+    v_all <- c(v_all, x[[i]]$opt$v)
     # get ploting indices
     if (is.null(grid)) {
       plotIndex <- 1:nrow(x[[i]]$Estimate)
@@ -569,6 +578,9 @@ plot.lpdensity <- function(..., alpha=NULL,
         plotIndex <- unique(plotIndex)
       }
     }
+
+    estRangeL <- min(estRangeL, min(x[[i]]$Estimate[, "grid"]))
+    estRangeR <- max(estRangeR, max(x[[i]]$Estimate[, "grid"]))
 
     data_x <- data.frame(x[[i]]$Estimate[, c("grid", "f_p", "f_q", "se_p", "se_q"), drop=FALSE])
 
@@ -681,7 +693,35 @@ plot.lpdensity <- function(..., alpha=NULL,
   ########################################
   # add title, x and y labs
   ########################################
+  if (is.null(ylabel)) {
+    if (all(v_all == v_all[1])) {
+      if (v_all[1] == 0) {
+        ylabel <- "Distribution function"
+      } else if (v_all[1] == 1) {
+        ylabel <- "Density"
+      } else {
+        ylabel <- paste("Density derivative (v=", v_all[1], ")", sep="")
+      }
+    } else {
+      ylabel <- ""
+    }
+  }
+
+  if (is.null(xlabel)) {
+    xlabel <- ""
+  }
+
+  if (is.null(title)) {
+    title <- ""
+  }
   temp_plot <- temp_plot + labs(x=xlabel, y=ylabel) + ggtitle(title)
+
+  # check plotting range vs estimation range
+  if (!is.null(grid)) {
+    if (min(grid) < estRangeL | max(grid) > estRangeR) {
+      warning("The plotting range exceeds the original estimation range. Option plot(..., grid=) should be within the estimation range specified by lpdensity(..., grid=).\n")
+    }
+  }
 
   ########################################
   # return the plot
@@ -695,66 +735,68 @@ plot.lpdensity <- function(..., alpha=NULL,
 #' @description This has been replaced by \code{\link{plot.lpdensity}}.
 #'
 #' @param ... Class "lpdensity" object, obtained from calling \code{\link{lpdensity}}.
-#' @param alpha Numeric scalar between 0 and 1, the significance level for plotting
-#'   confidence regions. If more than one is provided, they will be applied to data series
+#' @param alpha Numeric scalar between 0 and 1, specifies the significance level for plotting
+#'   confidence intervals/bands. If more than one is provided, they will be applied to each data series
 #'   accordingly.
-#' @param type String, one of \code{"line"} (default), \code{"points"} or \code{"both"}, how
-#'   the point estimates are plotted. If more than one is provided, they will be applied to data series
+#' @param type String, one of \code{"line"} (default), \code{"points"} and \code{"both"}, specifies how
+#'   the point estimates are plotted. If more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param lty Line type for point estimates, only effective if \code{type} is \code{"line"} or
 #'   \code{"both"}. \code{1} for solid line, \code{2} for dashed line, \code{3} for dotted line.
 #'   For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-#'   more than one is provided, they will be applied to data series accordingly.
+#'   more than one is provided, they will be applied to each data series accordingly.
 #' @param lwd Line width for point estimates, only effective if \code{type} is \code{"line"} or
 #'   \code{"both"}. Should be strictly positive. For other options, see the instructions for
 #'   \code{\link{ggplot2}} or \code{\link{par}}. If more than one is provided, they will be applied
-#'   to data series accordingly.
+#'   to each data series accordingly.
 #' @param lcol Line color for point estimates, only effective if \code{type} is \code{"line"} or
 #'   \code{"both"}. \code{1} for black, \code{2} for red, \code{3} for green, \code{4} for blue.
 #'   For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-#'   more than one is provided, they will be applied to data series
+#'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param pty Scatter plot type for point estimates, only effective if \code{type} is \code{"points"} or
 #'   \code{"both"}. For options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-#'   more than one is provided, they will be applied to data series
+#'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param pwd Scatter plot size for point estimates, only effective if \code{type} is \code{"points"} or
-#'   \code{"both"}. Should be strictly positive. If more than one is provided, they will be applied to data series
+#'   \code{"both"}. Should be strictly positive. If more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param pcol Scatter plot color for point estimates, only effective if \code{type} is \code{"points"} or
 #'   \code{"both"}. \code{1} for black, \code{2} for red, \code{3}
 #'   for green, \code{4} for blue.
 #'   For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-#'   more than one is provided, they will be applied to data series
+#'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param grid Numeric vector, specifies a subset of grid points
-#'   to plot point estimates.
+#'   to plot point estimates. This option is effective only if \code{type} is \code{"points"} or
+#'   \code{"both"}; or if \code{CItype} is \code{"ebar"} or
+#'   \code{"all"}.
 #' @param CItype String, one of \code{"region"} (shaded region, default), \code{"line"} (dashed lines),
 #'   \code{"ebar"} (error bars), \code{"all"} (all of the previous) or \code{"none"} (no confidence region),
-#'   how the confidence region should be plotted. If more than one is provided, they will be applied to data series
+#'   how the confidence region should be plotted. If more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param CIuniform \code{TRUE} or \code{FALSE} (default), plotting either pointwise confidence intervals (\code{FALSE}) or
 #'   uniform confidence bands (\code{TRUE}).
-#' @param CIsimul Positive integer, the number of simulations used to construct critical values (default is 2000). This
+#' @param CIsimul Positive integer, specifies the number of simulations used to construct critical values (default is \code{2000}). This
 #'   option is ignored if \code{CIuniform=FALSE}.
-#' @param CIshade Numeric, opaqueness of the confidence region, should be between 0 (transparent) and
+#' @param CIshade Numeric, specifies the opaqueness of the confidence region, should be between 0 (transparent) and
 #'   1. Default is 0.2. If more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param CIcol Color of the confidence region. \code{1} for black, \code{2} for red, \code{3}
 #'   for green, \code{4} for blue.
 #'   For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-#'   more than one is provided, they will be applied to data series
+#'   more than one is provided, they will be applied to each data series
 #'   accordingly.
-#' @param hist \code{TRUE} or \code{FALSE} (default), whether adding a histogram to the background.
-#' @param histData Numeric vector, the data used to construct the histogram plot.
-#' @param histBreaks Numeric vector, giving the breakpoints between histogram cells.
+#' @param hist \code{TRUE} or \code{FALSE} (default), specifies whether a histogram should be added to the background.
+#' @param histData Numeric vector, specifies the data used to construct the histogram plot.
+#' @param histBreaks Numeric vector, specifies the breakpoints between histogram cells.
 #' @param histFillCol Color of the histogram cells.
 #' @param histFillShade Opaqueness of the histogram cells, should be between 0 (transparent) and
 #'   1. Default is 0.2.
 #' @param histLineCol Color of the histogram lines.
-#' @param title,xlabel,ylabel Strings, title of the plot and labels for x- and y-axis.
-#' @param legendTitle String, title of legend.
-#' @param legendGroups String Vector, group names used in legend.
+#' @param title,xlabel,ylabel Strings, specifies the title of the plot and labels for the x- and y-axis.
+#' @param legendTitle String, specifies the legend title.
+#' @param legendGroups String vector, specifies the group names used in legend.
 #'
 #' @return
 #' \item{}{A stadnard \code{ggplot} object is returned, hence can be used for further customization.}

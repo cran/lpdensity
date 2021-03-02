@@ -87,7 +87,7 @@ summary.lpbwdensity <- function(object, ...) {
     if (is.null(gridIndex)) {
       gridIndex <- 1:nrow(x$BW)
     } else if (!all(gridIndex %in% 1:nrow(x$BW))) {
-      stop("Option gridIndex incorrectly specified.\n")
+      stop(paste("Option gridIndex incorrectly specified. Should be integers between 1 and ", nrow(x$BW), ".\n", sep=""))
     }
   } else {
     grid <- args[['grid']]
@@ -97,6 +97,9 @@ summary.lpbwdensity <- function(object, ...) {
       stop("Option grid incorrectly specified.\n")
     } else {
       gridIndex <- rep(NA, length(grid))
+      if (min(grid) < min(x$BW[, "grid"]) | max(grid) > max(x$BW[, "grid"])) {
+        warning("The reporting range exceeds the original estimation range. Option summary(..., grid=) should be within the estimation range specified by lpbwdensity(..., grid=).\n")
+      }
       for (j in 1:length(grid)) {
         gridIndex[j] <- which.min(abs(x$BW[, "grid"]-grid[j]))
         #gridIndex <- unique(gridIndex)

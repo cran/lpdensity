@@ -26,9 +26,9 @@ lpdensity.plot(
   histFillCol = 3,
   histFillShade = 0.2,
   histLineCol = "white",
-  title = "",
-  xlabel = "",
-  ylabel = "",
+  title = NULL,
+  xlabel = NULL,
+  ylabel = NULL,
   legendTitle = NULL,
   legendGroups = NULL
 )
@@ -36,75 +36,77 @@ lpdensity.plot(
 \arguments{
 \item{...}{Class "lpdensity" object, obtained from calling \code{\link{lpdensity}}.}
 
-\item{alpha}{Numeric scalar between 0 and 1, the significance level for plotting
-confidence regions. If more than one is provided, they will be applied to data series
+\item{alpha}{Numeric scalar between 0 and 1, specifies the significance level for plotting
+confidence intervals/bands. If more than one is provided, they will be applied to each data series
 accordingly.}
 
-\item{type}{String, one of \code{"line"} (default), \code{"points"} or \code{"both"}, how
-the point estimates are plotted. If more than one is provided, they will be applied to data series
+\item{type}{String, one of \code{"line"} (default), \code{"points"} and \code{"both"}, specifies how
+the point estimates are plotted. If more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{lty}{Line type for point estimates, only effective if \code{type} is \code{"line"} or
 \code{"both"}. \code{1} for solid line, \code{2} for dashed line, \code{3} for dotted line.
 For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-more than one is provided, they will be applied to data series accordingly.}
+more than one is provided, they will be applied to each data series accordingly.}
 
 \item{lwd}{Line width for point estimates, only effective if \code{type} is \code{"line"} or
 \code{"both"}. Should be strictly positive. For other options, see the instructions for
 \code{\link{ggplot2}} or \code{\link{par}}. If more than one is provided, they will be applied
-to data series accordingly.}
+to each data series accordingly.}
 
 \item{lcol}{Line color for point estimates, only effective if \code{type} is \code{"line"} or
 \code{"both"}. \code{1} for black, \code{2} for red, \code{3} for green, \code{4} for blue.
 For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-more than one is provided, they will be applied to data series
+more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{pty}{Scatter plot type for point estimates, only effective if \code{type} is \code{"points"} or
 \code{"both"}. For options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-more than one is provided, they will be applied to data series
+more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{pwd}{Scatter plot size for point estimates, only effective if \code{type} is \code{"points"} or
-\code{"both"}. Should be strictly positive. If more than one is provided, they will be applied to data series
+\code{"both"}. Should be strictly positive. If more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{pcol}{Scatter plot color for point estimates, only effective if \code{type} is \code{"points"} or
 \code{"both"}. \code{1} for black, \code{2} for red, \code{3}
 for green, \code{4} for blue.
 For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-more than one is provided, they will be applied to data series
+more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{grid}{Numeric vector, specifies a subset of grid points
-to plot point estimates.}
+to plot point estimates. This option is effective only if \code{type} is \code{"points"} or
+\code{"both"}; or if \code{CItype} is \code{"ebar"} or
+\code{"all"}.}
 
 \item{CItype}{String, one of \code{"region"} (shaded region, default), \code{"line"} (dashed lines),
 \code{"ebar"} (error bars), \code{"all"} (all of the previous) or \code{"none"} (no confidence region),
-how the confidence region should be plotted. If more than one is provided, they will be applied to data series
+how the confidence region should be plotted. If more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{CIuniform}{\code{TRUE} or \code{FALSE} (default), plotting either pointwise confidence intervals (\code{FALSE}) or
 uniform confidence bands (\code{TRUE}).}
 
-\item{CIsimul}{Positive integer, the number of simulations used to construct critical values (default is 2000). This
+\item{CIsimul}{Positive integer, specifies the number of simulations used to construct critical values (default is \code{2000}). This
 option is ignored if \code{CIuniform=FALSE}.}
 
-\item{CIshade}{Numeric, opaqueness of the confidence region, should be between 0 (transparent) and
+\item{CIshade}{Numeric, specifies the opaqueness of the confidence region, should be between 0 (transparent) and
 1. Default is 0.2. If more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{CIcol}{Color of the confidence region. \code{1} for black, \code{2} for red, \code{3}
 for green, \code{4} for blue.
 For other options, see the instructions for \code{\link{ggplot2}} or \code{\link{par}}. If
-more than one is provided, they will be applied to data series
+more than one is provided, they will be applied to each data series
 accordingly.}
 
-\item{hist}{\code{TRUE} or \code{FALSE} (default), whether adding a histogram to the background.}
+\item{hist}{\code{TRUE} or \code{FALSE} (default), specifies whether a histogram should be added to the background.}
 
-\item{histData}{Numeric vector, the data used to construct the histogram plot.}
+\item{histData}{Numeric vector, specifies the data used to construct the histogram plot.}
 
-\item{histBreaks}{Numeric vector, giving the breakpoints between histogram cells.}
+\item{histBreaks}{Numeric vector, specifies the breakpoints between histogram cells.}
 
 \item{histFillCol}{Color of the histogram cells.}
 
@@ -113,11 +115,11 @@ accordingly.}
 
 \item{histLineCol}{Color of the histogram lines.}
 
-\item{title, xlabel, ylabel}{Strings, title of the plot and labels for x- and y-axis.}
+\item{title, xlabel, ylabel}{Strings, specifies the title of the plot and labels for the x- and y-axis.}
 
-\item{legendTitle}{String, title of legend.}
+\item{legendTitle}{String, specifies the legend title.}
 
-\item{legendGroups}{String Vector, group names used in legend.}
+\item{legendGroups}{String vector, specifies the group names used in legend.}
 }
 \value{
 \item{}{A stadnard \code{ggplot} object is returned, hence can be used for further customization.}

@@ -75,8 +75,8 @@ This option will be ignored if \code{bwselect} is \code{"mse-rot"} or \code{"ims
 \description{
 \code{\link{lpbwdensity}} implements the bandwidth selection methods for local
   polynomial based density (and derivatives) estimation proposed and studied
-  in Cattaneo, Jansson and Ma (2020a) and Cattaneo, Jansson and Ma (2020b).
-  See Cattaneo, Jansson and Ma (2020c) for more implementation details and illustrations.
+  in Cattaneo, Jansson and Ma (2020, 2021a).
+  See Cattaneo, Jansson and Ma (2021b) for more implementation details and illustrations.
 
   Companion command: \code{\link{lpdensity}} for estimation and robust bias-corrected inference.
 
@@ -97,11 +97,11 @@ summary(bw1, gridIndex=4:10)
 
 }
 \references{
-Cattaneo, M. D., M. Jansson, and X. Ma. 2020a. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, 115(531): 1449-1455.
+Cattaneo, M. D., M. Jansson, and X. Ma. 2020. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, 115(531): 1449-1455.
 
-  Cattaneo, M. D., M. Jansson, and X. Ma. 2020b. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JoE.pdf}{Local Regression Distribution Estimators}. Working paper.
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2021a. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2021_JoE.pdf}{Local Regression Distribution Estimators}. \emph{Journal of Econometrics}, forthcoming.
 
-  Cattaneo, M. D., M. Jansson, and X. Ma. 2020c. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. Working paper.
+  Cattaneo, M. D., M. Jansson, and X. Ma. 2021b. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2021_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. \emph{Journal of Statistical Software}, forthcoming.
 }
 \seealso{
 Supported methods: \code{\link{coef.lpbwdensity}}, \code{\link{print.lpbwdensity}}, \code{\link{summary.lpbwdensity}}.

@@ -26,9 +26,9 @@
   histFillCol = 3,
   histFillShade = 0.2,
   histLineCol = "white",
-  title = "",
-  xlabel = "",
-  ylabel = "",
+  title = NULL,
+  xlabel = NULL,
+  ylabel = NULL,
   legendTitle = NULL,
   legendGroups = NULL
 )
@@ -77,7 +77,9 @@ more than one is provided, they will be applied to each data series
 accordingly.}
 
 \item{grid}{Numeric vector, specifies a subset of grid points
-to plot point estimates.}
+to plot point estimates. This option is effective only if \code{type} is \code{"points"} or
+\code{"both"}; or if \code{CItype} is \code{"ebar"} or
+\code{"all"}.}
 
 \item{CItype}{String, one of \code{"region"} (shaded region, default), \code{"line"} (dashed lines),
 \code{"ebar"} (error bars), \code{"all"} (all of the previous) or \code{"none"} (no confidence region),
