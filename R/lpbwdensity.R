@@ -3,8 +3,8 @@
 #'
 #' @description  \code{\link{lpbwdensity}} implements the bandwidth selection methods for local
 #'   polynomial based density (and derivatives) estimation proposed and studied
-#'   in Cattaneo, Jansson and Ma (2020, 2021a).
-#'   See Cattaneo, Jansson and Ma (2021b) for more implementation details and illustrations.
+#'   in Cattaneo, Jansson and Ma (2020, 2022a).
+#'   See Cattaneo, Jansson and Ma (2022b) for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpdensity}} for estimation and robust bias-corrected inference.
 #'
@@ -53,9 +53,9 @@
 #' @references
 #'   Cattaneo, M. D., M. Jansson, and X. Ma. 2020. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, 115(531): 1449-1455.
 #'
-#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2021a. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2021_JoE.pdf}{Local Regression Distribution Estimators}. \emph{Journal of Econometrics}, forthcoming.
+#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2022a. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2022_JoE.pdf}{Local Regression Distribution Estimators}. \emph{Journal of Econometrics}, forthcoming.
 #'
-#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2021b. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2021_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. \emph{Journal of Statistical Software}, forthcoming.
+#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2022b. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2022_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. \emph{Journal of Statistical Software}, forthcoming. Doi:10.18637/jss.v101.i02
 #'
 #' @author
 #' Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.

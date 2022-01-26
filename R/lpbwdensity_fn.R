@@ -278,7 +278,7 @@ bw_ROT  <- function(data, grid, p, v, kernel, Cweights, Pweights, massPoints, st
   # bias estimate, no rate added, DGP constant
   bias_dgp <- matrix(NA, ncol=2, nrow=ng)
   for (j in 1:ng) {
-    # this comes from a higher-order bias expansion. See Lemma 5 in the Appendix of Cattaneo, Jansson and Ma (2019a)
+    # this comes from a higher-order bias expansion. See Lemma 5 in the Appendix of Cattaneo, Jansson and Ma (2022a)
     bias_dgp[j, 1] <- eval(temp_3, list(x=grid[j], mu=mean_hat, sd=sd_hat)) / factorial(p+1) * factorial(v)
     bias_dgp[j, 2] <- eval(temp_4, list(x=grid[j], mu=mean_hat, sd=sd_hat)) / factorial(p+2) * factorial(v) +
       bias_dgp[j, 1] * eval(temp_2, list(x=grid[j], mu=mean_hat, sd=sd_hat)) / eval(temp_1, list(x=grid[j], mu=mean_hat, sd=sd_hat))
@@ -302,7 +302,7 @@ bw_ROT  <- function(data, grid, p, v, kernel, Cweights, Pweights, massPoints, st
     sd_dgp <- sd_dgp * sqrt(abs((solve(S) %*% G %*% solve(S))[v+1, v+1]))
   } else {
     for (j in 1:ng) {
-      # this comes from a higher-order variance expansion. See Lemma 4 in the Appendix of Cattaneo, Jansson and Ma (2019a)
+      # this comes from a higher-order variance expansion. See Lemma 4 in the Appendix of Cattaneo, Jansson and Ma (2022a)
       sd_dgp[j, 1] <- sqrt(
         pnorm(grid[j], mean=mean_hat, sd=sd_hat) * pnorm(grid[j], mean=mean_hat, sd=sd_hat, lower.tail=FALSE) /
           dnorm(grid[j], mean=mean_hat, sd=sd_hat) / (0.5*n^2))
@@ -406,7 +406,7 @@ bw_IROT <- function(data, grid, p, v, kernel, Cweights, Pweights, massPoints, st
   # bias estimate, no rate added, DGP constant
   bias_dgp <- matrix(NA, ncol=2, nrow=ng)
   for (j in 1:ng) {
-    # this comes from a higher-order bias expansion. See Lemma 5 in the Appendix of Cattaneo, Jansson and Ma (2019a)
+    # this comes from a higher-order bias expansion. See Lemma 5 in the Appendix of Cattaneo, Jansson and Ma (2022a)
     bias_dgp[j, 1] <- eval(temp_3, list(x=grid[j], mu=mean_hat, sd=sd_hat)) / factorial(p+1) * factorial(v)
     bias_dgp[j, 2] <- eval(temp_4, list(x=grid[j], mu=mean_hat, sd=sd_hat)) / factorial(p+2) * factorial(v) +
       bias_dgp[j, 1] * eval(temp_2, list(x=grid[j], mu=mean_hat, sd=sd_hat)) / eval(temp_1, list(x=grid[j], mu=mean_hat, sd=sd_hat))
@@ -430,7 +430,7 @@ bw_IROT <- function(data, grid, p, v, kernel, Cweights, Pweights, massPoints, st
     sd_dgp <- sd_dgp * sqrt(abs((solve(S) %*% G %*% solve(S))[v+1, v+1]))
   } else {
     for (j in 1:ng) {
-      # this comes from a higher-order variance expansion. See Lemma 4 in the Appendix of Cattaneo, Jansson and Ma (2019a)
+      # this comes from a higher-order variance expansion. See Lemma 4 in the Appendix of Cattaneo, Jansson and Ma (2022a)
       sd_dgp[j, 1] <- sqrt(
         pnorm(grid[j], mean=mean_hat, sd=sd_hat) * pnorm(grid[j], mean=mean_hat, sd=sd_hat, lower.tail=FALSE) /
           dnorm(grid[j], mean=mean_hat, sd=sd_hat) / (0.5*n^2))
