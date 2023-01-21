@@ -1,10 +1,10 @@
-50606e21d7ece37e27c63e6aab7bc76f *DESCRIPTION
+4148f92856eb534c22c400aa8875534c *DESCRIPTION
 175097b6660e5395307799aa0cb1fb97 *NAMESPACE
-0b9d012f923a8916119515457e365a32 *R/lpbwdensity.R
+48fce2a63b88833e3350e6f8d04329eb *R/lpbwdensity.R
 f7f6a0d34fe61ac69b06c17c83592122 *R/lpbwdensity_fn.R
 a0d2d63713b5486ee01d55d848c4fd78 *R/lpbwdensity_methods.R
-1734d1537bf22a4f17a9ca2643a0c1d9 *R/lpdensity-package.R
-1a5c8e34282179d2c66cfcb9a60dd18f *R/lpdensity.R
+2187f17f63dd5bd8f167d452f9004268 *R/lpdensity-package.R
+4d5149613422a2884ffd3a9bbc83ecef *R/lpdensity.R
 93238546b52594642292021affdea043 *R/lpdensity_fn.R
 79a5f87839c3f6852e666c97c2703dac *R/lpdensity_methods.R
 ea124a494ad7922985532ad3b308e4d5 *build/partial.rdb
@@ -20,9 +20,9 @@ d99d52f134d3c5c439ca16442fc6569d *man/bw_ROT.Rd
 3560fad5d81bc92c117cdedb7c85ab5d *man/coef.lpbwdensity.Rd
 bd4c5199645dee001b75def37455b2bd *man/coef.lpdensity.Rd
 04ea663ea5d728ab0cef1cbdb22aba95 *man/confint.lpdensity.Rd
-7b39ed048afeccbbf5642dc3a40ecc55 *man/lpbwdensity.Rd
-111e1a9b768ab15bdbf70174c47d1498 *man/lpdensity-package.Rd
-37f5b82333ff19ba616718cfda221f76 *man/lpdensity.Rd
+91eaafc45133ec3b198fa0adc1c671c0 *man/lpbwdensity.Rd
+f1d2ee3958796d975a74667719743635 *man/lpdensity-package.Rd
+5a332f1b2cbfe6b8a8e2b8f6f3ca335d *man/lpdensity.Rd
 9973572f6b139840b57fe3de83a98c25 *man/lpdensity.plot.Rd
 baf0aa4d3f604f1e6e3ddbda0578774b *man/lpdensityUnique.Rd
 a50b6d9ca4570ee6d8f7dbfad1c4f83b *man/lpdensity_fn.Rd

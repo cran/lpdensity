@@ -4,8 +4,8 @@
 #' @description \code{\link{lpdensity}} implements the local polynomial regression based density (and derivatives)
 #'   estimator proposed in Cattaneo, Jansson and Ma (2020).  Robust bias-corrected inference methods,
 #'   both pointwise (confidence intervals) and uniform (confidence bands), are also implemented
-#'   following the results in Cattaneo, Jansson and Ma (2020, 2022a).
-#'   See Cattaneo, Jansson and Ma (2022b) for more implementation details and illustrations.
+#'   following the results in Cattaneo, Jansson and Ma (2020, 2023).
+#'   See Cattaneo, Jansson and Ma (2022) for more implementation details and illustrations.
 #'
 #'   Companion command: \code{\link{lpbwdensity}} for bandwidth selection.
 #'
@@ -78,7 +78,7 @@
 #'   Setting \code{q} and \code{p} to be equal results on centered at the point estimate confidence intervals/bands,
 #'   but requires undersmoothing for valid inference (i.e., (I)MSE-optimal bandwdith for the density point estimator
 #'   cannot be used). Hence the bandwidth would need to be specified manually when \code{q=p}, and the
-#'   point estimates will not be (I)MSE optimal. See Cattaneo, Jansson and Ma (2020, 2022a) for details, and also
+#'   point estimates will not be (I)MSE optimal. See Cattaneo, Jansson and Ma (2020, 2023) for details, and also
 #'   Calonico, Cattaneo, and Farrell (2018, 2022) for robust bias correction methods.
 #'
 #'   Sometimes the density point estimates may lie outside of the confidence intervals/bands, which can happen
@@ -92,9 +92,9 @@
 #'
 #'   Cattaneo, M. D., M. Jansson, and X. Ma. 2020. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2020_JASA.pdf}{Simple Local Polynomial Density Estimators}. \emph{Journal of the American Statistical Association}, 115(531): 1449-1455. \doi{10.1080/01621459.2019.1635480}
 #'
-#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2022a. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2022_JoE.pdf}{Local Regression Distribution Estimators}. \emph{Journal of Econometrics}, forthcoming. \doi{10.1016/j.jeconom.2021.01.006}
+#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2022. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2022_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. \emph{Journal of Statistical Software}, 101(2), 1–25. \doi{10.18637/jss.v101.i02}
 #'
-#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2022b. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2022_JSS.pdf}{lpdensity: Local Polynomial Density Estimation and Inference}. \emph{Journal of Statistical Software}, 101(2), 1–25. \doi{10.18637/jss.v101.i02}
+#'   Cattaneo, M. D., M. Jansson, and X. Ma. 2023. \href{https://nppackages.github.io/references/Cattaneo-Jansson-Ma_2023_JoE.pdf}{Local Regression Distribution Estimators}. \emph{Journal of Econometrics}, forthcoming. \doi{10.1016/j.jeconom.2021.01.006}
 #'
 #' @author
 #' Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
