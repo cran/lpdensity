@@ -1,8 +1,8 @@
 Package: lpdensity
 Type: Package
 Title: Local Polynomial Density Estimation and Inference
-Date: 2026-05-20
-Version: 3.0
+Date: 2026-05-23
+Version: 3.0.1
 Authors@R: c(
     person("Matias D.", "Cattaneo", email = "matias.d.cattaneo@gmail.com", role = c("aut", "cre")),
     person("Michael", "Jansson", email = "michael.jansson.berkeley@gmail.com", role = "aut"),
@@ -23,6 +23,6 @@ Suggests: testthat (>= 3.0.0)
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2026-05-20 12:00:21 UTC; CodexSandboxOffline
+Packaged: 2026-05-23 08:44:27 UTC; CodexSandboxOffline
 Repository: CRAN
-Date/Publication: 2026-05-21 07:30:02 UTC
+Date/Publication: 2026-05-23 11:20:02 UTC

@@ -1,4 +1,4 @@
-db738403442a5dbf9efbc9a1ada052d9 *DESCRIPTION
+30c6c7b1ff47ae6547165945e5e34e57 *DESCRIPTION
 175097b6660e5395307799aa0cb1fb97 *NAMESPACE
 ba811fb35ad19b4c74f017faee0c4f2a *R/lpbwdensity.R
 82d446b9a7dac8b4bafb38aec35ef1fd *R/lpbwdensity_fn.R
@@ -37,4 +37,4 @@ ee8d665a49aefee8f354431c5faa69c8 *man/summary.lpdensity.Rd
 505cdd7e49732f4ef6120ea1190ace0e *tests/testthat/fixtures/lpbwdensity-baseline-broad.csv
 9f3b4faf70b6fcb8787c1a9b9a5e6998 *tests/testthat/fixtures/lpdensity-baseline-broad.csv
 f01db2a711bacdde29ae68969cec5d4e *tests/testthat/fixtures/numerical-baseline.csv
-2b4e598a3959712a67a7b259d237761a *tests/testthat/test-numerical-baseline.R
+90179ead2e196f6311b467e121d088fe *tests/testthat/test-numerical-baseline.R
